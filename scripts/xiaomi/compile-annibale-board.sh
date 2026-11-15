@@ -23,8 +23,8 @@ if ! command -v bc >/dev/null && [[ -x "$HOST_TOOLS_BIN/gavinhoward-bc" ]]; then
 fi
 JOBS=${JOBS:-3}
 PHASE=${1:-all}
-if [[ "$PHASE" != all && "$PHASE" != prepare && "$PHASE" != objects ]]; then
-	printf 'Usage: %s [all|prepare|objects]\n' "$0" >&2
+if [[ "$PHASE" != all && "$PHASE" != prepare && "$PHASE" != objects && "$PHASE" != fingerprint ]]; then
+	printf 'Usage: %s [all|prepare|objects|fingerprint]\n' "$0" >&2
 	exit 2
 fi
 for tool in clang ld.lld llvm-ar bc gcc bison "$M4"; do
@@ -39,18 +39,32 @@ if [[ "$PHASE" != objects ]]; then
 		"$OUT_DIR/.config" arch/arm64/configs/vendor/sun_perf.config \
 		arch/arm64/configs/vendor/annibale_board.config \
 		2>&1 | tee "$OUT_DIR/merge-config.log"
+	if [[ "$PHASE" == fingerprint ]]; then
+		KCONFIG_CONFIG="$OUT_DIR/.config" scripts/kconfig/merge_config.sh -m \
+			"$OUT_DIR/.config" arch/arm64/configs/vendor/annibale_fingerprint_test.config
+	fi
 	"${KMAKE[@]}" olddefconfig modules_prepare 2>&1 | tee "$OUT_DIR/prepare.log"
 fi
 for option in CONFIG_MI_T1_CHIP=m CONFIG_IR_SPI_XIAOMI=m \
 	CONFIG_INPUT_PM8941_PWRKEY=m CONFIG_INPUT_PM8941_PWRKEY_XIAOMI=y \
-	CONFIG_INPUT_QCOM_HV_HAPTICS=m CONFIG_INPUT_QCOM_HV_HAPTICS_XIAOMI=y; do
+	CONFIG_INPUT_QCOM_HV_HAPTICS=m CONFIG_INPUT_QCOM_HV_HAPTICS_XIAOMI=y \
+	CONFIG_MI_HARDWARE_ID=m CONFIG_MI_WIFI_GPIO=m; do
 	grep -qx "$option" "$OUT_DIR/.config" || { printf 'Missing config: %s\n' "$option" >&2; exit 1; }
 done
 if [[ "$PHASE" != prepare ]]; then
 	"${KMAKE[@]}" drivers/gpio/gpio-mi-t1.o \
 		drivers/media/rc/xiaomi/ir-spi.o \
 		drivers/input/misc/pm8941-pwrkey.o \
-		drivers/input/misc/qcom-hv-haptics.o 2>&1 | tee "$OUT_DIR/board-objects.log"
+		drivers/input/misc/qcom-hv-haptics.o \
+		drivers/misc/hwid/hwid.o \
+		drivers/misc/wifi_gpio/xiaomi_wifi_gpio.o 2>&1 | tee "$OUT_DIR/board-objects.log"
+	if [[ "$PHASE" == fingerprint ]]; then
+		grep -qx CONFIG_FINGERPRINT_MI_FP=m "$OUT_DIR/.config"
+		grep -qx CONFIG_ULTRA_FINGERPRINT_P11=y "$OUT_DIR/.config"
+		"${KMAKE[@]}" drivers/input/fingerprint/mi_fp/ \
+			drivers/soc/qcom/panel_event_notifier.o \
+			2>&1 | tee "$OUT_DIR/fingerprint-objects.log"
+	fi
 	# Optional source check only: leave the saved annibale .config unchanged.
 	"${KMAKE[@]}" CONFIG_LEDS_AW21024=m drivers/leds/leds-aw21024.o \
 		2>&1 | tee "$OUT_DIR/optional-led-object.log"

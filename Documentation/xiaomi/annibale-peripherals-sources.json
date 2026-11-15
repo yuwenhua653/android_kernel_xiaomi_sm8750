@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "scope": "Source provenance and static stock-module cross-check; no binary module redistribution or runtime proof",
+  "kernel_baseline": "ba177329f8ff87a3bac9c8335a0db0cd70c6284f",
+  "hwid_source": {
+    "repository": "xiaomi-dada/android_kernel_xiaomi_sm8750",
+    "commit": "b269d3a5d576fbf3e8899e1189ce8d2d62ba6528",
+    "kind": "community reconstruction; not MiCode source"
+  },
+  "peripheral_source": {
+    "repository": "MiCode/Xiaomi_Kernel_OpenSource",
+    "commit": "f66f8c8bcbe38044fab61d44ea7f7c224f82b3ea",
+    "branch": "annibale-w-oss"
+  },
+  "stock_reference": {
+    "repository": "xiaomi-annibale/android_device_xiaomi_annibale-kernel",
+    "commit": "df318c6b1c81e17d4fdc0fc9333c00c4d90e928a",
+    "files": {
+      "modules/vendor_boot/hwid.ko": "8602ef4d6b05616258fe4176fff00e22c568d2e372bcd42e2d01a53d2c130602",
+      "modules/vendor_boot/mi_fp.ko": "0f5e612022b946ef6d028cb24098622c4498a2d29fae01c4ae49539885e12021"
+    },
+    "sun_soc_id": 618,
+    "sun_project_table": {
+      "1": "haotian",
+      "2": "dada",
+      "3": "miro",
+      "4": "xuanyuan",
+      "5": "bixi",
+      "6": "nirvana",
+      "7": "onyx",
+      "8": "luming",
+      "9": "piano",
+      "10": "yupei",
+      "11": "annibale"
+    },
+    "non_gpl_exports": [
+      "get_hw_build_adc",
+      "get_hw_country_version",
+      "get_hw_id_value",
+      "get_hw_project_adc",
+      "get_hw_version_build",
+      "get_hw_version_major",
+      "get_hw_version_minor",
+      "get_hw_version_platform",
+      "product_name_get"
+    ],
+    "module_parameter_types": [
+      "parmtype=hwid_value:uint",
+      "parmtype=project:uint",
+      "parmtype=build_adc:uint",
+      "parmtype=project_adc:uint"
+    ],
+    "identity_layout": {
+      "country": "bits 31:20",
+      "major": "bits 31:16",
+      "minor": "bits 15:0",
+      "build": "bits 19:16"
+    },
+    "fingerprint_supply_selection": "project == 11 and (((identity >> 16) & 15) * 10 + (identity & 15)) == 1 selects fp_3v1_vreg; otherwise fp_3v3_vreg"
+  },
+  "files": [
+    {
+      "path": "drivers/input/fingerprint/mi_fp/Kconfig",
+      "ported_sha256": "fe9b2fbc30eb1054989f5fcb44aad454374a7373275e79f5130d5860b9c882a0",
+      "donor_sha256": "c21c24b10f3cc5a0e2471d47b4df1f7c0b0ab159788b541a59bdbbe70e9e3dc4"
+    },
+    {
+      "path": "drivers/input/fingerprint/mi_fp/Makefile",
+      "ported_sha256": "5c67937791079c27842a5c8ad2c6fda350efc19e41d11635b32095c6e34d6002",
+      "donor_sha256": "06e1f216489a5e5cc0219785df625799baf0c4004e97d1d46a7d4bc9b1b8ef65"
+    },
+    {
+      "path": "drivers/input/fingerprint/mi_fp/fp_driver.c",
+      "ported_sha256": "32813465323b10d7d5322cbe3f63913d32d9dc8a50956e9fe7b46ebdfa67e4e0",
+      "donor_sha256": "690f0e6e54f13759d7e0453c77a00ae6b77c582440778cbce8cb4a9e45d56972"
+    },
+    {
+      "path": "drivers/input/fingerprint/mi_fp/fp_driver.h",
+      "ported_sha256": "3906ea72ab0c1f4864abbea95a830b9d308c5a4e730c90fb442d1ad83b9394a7",
+      "donor_sha256": "cf3d5d70c0c07926dff79f4956676164b1de772c815c5cd3466f96aea5cc6ae6"
+    },
+    {
+      "path": "drivers/input/fingerprint/mi_fp/fp_input.c",
+      "ported_sha256": "04a170831b02c60074e14378887f0f0e98404bca2e81f92a901465a7270a153f",
+      "donor_sha256": "6e737f126d9b7c81907769de787a59b201aac9e148bfd5ee7362596fd1144946"
+    },
+    {
+      "path": "drivers/input/fingerprint/mi_fp/fp_netlink.c",
+      "ported_sha256": "547a1336572d15c51ee7062cc636d3ef29844d392df65163934663c83315cfc2",
+      "donor_sha256": "ba90ad760654a318cec994ba60014062a15c4357e5348772cdfb6676edd8ac84"
+    },
+    {
+      "path": "drivers/input/fingerprint/mi_fp/fp_platform.c",
+      "ported_sha256": "8fdb64558188df2d8ffad3582eca55f38803e285b799f4b8105607a39d5f2d1e",
+      "donor_sha256": "0d8dc979f7d0d9ee80471d08a5b6b88358211a90706624bf257227062660029a"
+    },
+    {
+      "path": "drivers/input/fingerprint/mi_fp/fp_ultra.h",
+      "ported_sha256": "e536e1f3c02cae5adcec2351cb76282001e8e0188b96cc8c8a1d06eb2fbebbf4",
+      "donor_sha256": "e536e1f3c02cae5adcec2351cb76282001e8e0188b96cc8c8a1d06eb2fbebbf4"
+    },
+    {
+      "path": "drivers/misc/hwid/Kconfig",
+      "ported_sha256": "551186ba193ca87e66326ad7349f18bd81a936e184a401480b4284ebadc67725",
+      "donor_sha256": "551186ba193ca87e66326ad7349f18bd81a936e184a401480b4284ebadc67725"
+    },
+    {
+      "path": "drivers/misc/hwid/Makefile",
+      "ported_sha256": "57175a684011bf45e7263605246cd66a60cc5e45dbb3e5db8d6cafad947d8c13",
+      "donor_sha256": "57175a684011bf45e7263605246cd66a60cc5e45dbb3e5db8d6cafad947d8c13"
+    },
+    {
+      "path": "drivers/misc/hwid/hwid.c",
+      "ported_sha256": "a37bdab2fbb2d0461b3018a314d63fb1317ee80e023cb9f4a119ae3ecabc0ef4",
+      "donor_sha256": "edc1a0a2097cd89a34796c0de9796d48a9ff339347e465c02e5a04108ace3c46"
+    },
+    {
+      "path": "drivers/misc/wifi_gpio/Kconfig",
+      "ported_sha256": "094c2ccf6dc7722365dbb75e9e85ac6ccd4fb14a7f5070b14ced615404902e8f",
+      "donor_sha256": "1c284f8bea5c6440ccbda1de54658095f9f9e81fe76f756a57f9566c59b2d3ba"
+    },
+    {
+      "path": "drivers/misc/wifi_gpio/Makefile",
+      "ported_sha256": "195786983d2cf449a80bde87454ee43592d10901b3b4a8f7196d34db7945393d",
+      "donor_sha256": "f464a135b95efab3b89f5dfd5ac559957fe459592f4973afb7e95724688f0b2b"
+    },
+    {
+      "path": "drivers/misc/wifi_gpio/xiaomi_wifi_gpio.c",
+      "ported_sha256": "63b539fb409b34661f71e7526bb23ad4001ad1f8aaafff96d676181243bc2f44",
+      "donor_sha256": "6935df8cc8fafb81352c090ac9628607ea48adb7a82eb41fd7a11f752e951281"
+    },
+    {
+      "path": "include/linux/hwid.h",
+      "ported_sha256": "634608bf128fdc53125429cf55a14669cab6284cecdaab078672e3358ae84bdf",
+      "donor_sha256": "f1f11201bb64f33d024882a736922ac58a062c64686a686d8ef041f5e516f5cb"
+    }
+  ]
+}

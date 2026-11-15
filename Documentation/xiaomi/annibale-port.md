@@ -60,17 +60,19 @@ export: their consumers have not been ported. This does **not** implement Xiaomi
 display recovery or mtdoops integration. A future display port needs an explicit,
 synchronized callback registration and teardown design.
 
-Fingerprint and Wi-Fi GPIO drivers are not imported: the published annibale
-kernel lacks their required Xiaomi `hwid` implementation. Charging is also
-blocked by missing MCA source. No replacement hardware identities or dummy
-hardware implementations are supplied. This fragment does not claim that other
-Xiaomi device drivers or the complete set of vendor modules are present.
+The R4 batch adds a stock-K90-checked community HWID implementation and the
+MiCode Wi-Fi SAR GPIO interface. P11 fingerprint is an explicit, default-off
+experimental candidate. See [annibale-peripherals.md](annibale-peripherals.md)
+for provenance, configuration, loader requirements and outstanding qualification.
+Charging remains blocked on MCA integration. No fabricated hardware identities
+or dummy hardware implementations are supplied.
 
 ## Configuration and reproducible compile check
 
 Apply `arch/arm64/configs/vendor/annibale_board.config` after `gki_defconfig` and
 `arch/arm64/configs/vendor/sun_perf.config`. The fragment selects the board modules/options above and the Annibale haptics
-controls described in [annibale-haptics.md](annibale-haptics.md); AW21024 stays disabled. A full Android kernel build must
+controls described in [annibale-haptics.md](annibale-haptics.md), plus HWID and Wi-Fi
+SAR from R4. AW21024 and the fingerprint candidate stay disabled. A full Android kernel build must
 explicitly include this fragment and the matching annibale DT/module packaging.
 Adding this file alone does not change the default sun build.
 

@@ -75,9 +75,18 @@ git clone -b annibale https://github.com/yuwenhua653/android_kernel_xiaomi_sm875
 详细 ABI、源码来源、测试及未完成项见
 [annibale-haptics.md](Documentation/xiaomi/annibale-haptics.md)。
 
+## 第三批：HWID、Wi-Fi SAR、P11 指纹
+
+接入 HWID 和小米 Wi-Fi SAR GPIO；HWID 来自社区 GPL 重建实现，已与 K90
+原厂模块核对查询接口、位域和项目表，不能称为小米新公开的 HWID 源码。
+P11 指纹候选代码也已接入并完成目标文件编译，但保持默认关闭。
+供电、IPC、netlink 与输入处理已修正一批问题，仍需生命周期及原厂 HAL/TEE 验证。
+源码来源、配置和测试见 [annibale-peripherals.md](Documentation/xiaomi/annibale-peripherals.md)。
+
 ## 尚待完成
 
-- 补齐/核对 HWID、MCA 充电及指纹等缺失源码和依赖；DT 中有对应节点不代表驱动已可用。
+- 接入真实 HWID 参数传递，完成指纹 HAL/TEE 和生命周期验证；补齐 MCA 充电栈。
+- 验证 Wi-Fi SAR 用户空间事件处理；GPIO 接口接入不代表无线网络功能已完整适配。
 - 验证原厂用户空间接口、触摸固件与硬件版本，接入全部显示/相机所需小米扩展。
 - 接入 ROM 内核源码编译、外部模块、DTB/DTBO 与模块分区装配。
 - 完成真实 `Module.symvers` 下的模块链接、符号/ABI 核查和整核构建。

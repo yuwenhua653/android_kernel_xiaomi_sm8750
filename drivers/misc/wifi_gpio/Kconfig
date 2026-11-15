@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: GPL-2.0-only
+config MI_WIFI_GPIO
+	tristate "Xiaomi Wi-Fi SAR GPIO"
+	depends on OF && GPIOLIB && NET && MI_HARDWARE_ID
+	help
+	  Report the board SAR GPIO through the Xiaomi wifi_sar netlink family.
+	  Only boards identified as Chinese by supplied HWID parameters bind.
+	  This is the SAR notification interface, not the WLAN radio driver.
+	  To build a module, choose M; it is called xiaomi_wifi_gpio.

@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: GPL-2.0-only
+config FINGERPRINT_MI_FP
+	tristate "Xiaomi Annibale P11 fingerprint (experimental)"
+	depends on EXPERT && INPUT && OF && GPIOLIB && REGULATOR && NET
+	depends on MI_HARDWARE_ID && QCOM_PANEL_EVENT_NOTIFIER && DRM_PANEL
+	help
+	  Compile the MiCode P11 platform, IPC and userspace interface candidate.
+	  This port is not yet qualified for deployment: remaining lifetime,
+	  suspend and HAL/TEE behavior need validation. Leave disabled normally.
+	  The module is named mi_fp. Only the Annibale P11 variant is supported.
+
+config ULTRA_FINGERPRINT_P11
+	bool
+	default y if FINGERPRINT_MI_FP
