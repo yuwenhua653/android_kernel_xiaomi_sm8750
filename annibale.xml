@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <remote name="annibale-kernel-github" fetch="https://github.com/" />
+  <project name="yuwenhua653/android_kernel_xiaomi_sm8750"
+           path="kernel/xiaomi/sm8750"
+           remote="annibale-kernel-github" revision="annibale" />
+  <project name="yuwenhua653/android_kernel_xiaomi_sm8750-modules"
+           path="kernel/xiaomi/sm8750-modules"
+           remote="annibale-kernel-github" revision="annibale" />
+  <project name="yuwenhua653/android_kernel_xiaomi_sm8750-devicetrees"
+           path="kernel/xiaomi/sm8750-devicetrees"
+           remote="annibale-kernel-github" revision="annibale" />
+</manifest>
