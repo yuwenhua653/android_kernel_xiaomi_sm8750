@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "scope": "Annibale MCA source foundation; no binary redistribution/runtime qualification",
+  "parent_kernel_commit": "0b4a1eeb229b627fd4a0d65404c4ccdd0643c639",
+  "reference_source": {
+    "repository": "xiaomi-dada/android_kernel_xiaomi_sm8750",
+    "checkout_commit": "a7a6375b13e490d187c2b348d961cec39a414ad2",
+    "common_introduction_commit": "7145ffb9459fa49eb8b82a6addf7c977f1f9ed8a",
+    "kind": "GPL community reconstruction from Dada stock; not MiCode MCA source"
+  },
+  "stock_reference": {
+    "repository": "xiaomi-annibale/android_device_xiaomi_annibale-kernel",
+    "commit": "df318c6b1c81e17d4fdc0fc9333c00c4d90e928a",
+    "files": {
+      "modules/vendor_boot/mca_adsp_glink.ko": "d1d9e9a719ef8b6debead9d45a8ca3467a8ae386fc902083d6fddf645109dfaa",
+      "modules/vendor_boot/mca_hwid.ko": "980c17cd1bb418548b86b94d37308504878d198ecac48865472680c94db24f19",
+      "modules/vendor_boot/mca_parse_dts.ko": "cf107523ad129c9bbf55ce20c68ec5277f12fd7b690ee645c804250e1040504a",
+      "modules/vendor_boot/mca_workqueue.ko": "f9554e3153d94cb11ac7c04b2d710b5c8455d457c8df2db45f4c6b11b1481f8f"
+    }
+  },
+  "checked_transport_layout": {
+    "owners": [
+      32778,
+      32777
+    ],
+    "request_type": 1,
+    "notification_type": 2,
+    "read_opcode": 1,
+    "write_opcode": 2,
+    "request_size": 276,
+    "request_offsets": {
+      "property": 12,
+      "sequence": 16,
+      "data": 20
+    },
+    "response_size": 280,
+    "response_offsets": {
+      "property": 12,
+      "return": 16,
+      "sequence": 20,
+      "data": 24
+    },
+    "notification_offsets": {
+      "id": 12,
+      "data": 16
+    },
+    "data_capacity": 256,
+    "max_caller_length": 255
+  },
+  "checked_hwid_offsets": {
+    "size_arm64": 40,
+    "platform": 0,
+    "country": 4,
+    "major": 8,
+    "minor": 12,
+    "build": 16,
+    "build_adc": 20,
+    "product_adc": 24,
+    "hwid": 28,
+    "product_name": 32
+  },
+  "files": [
+    {
+      "path": "drivers/power/supply/mca/Kbuild",
+      "ported_sha256": "b5680c7977b4eec7f1d744bb5a8790220039fab354568a5c6976932b905a0131",
+      "reference_sha256": "ad7a72f9243db6445eaf8c2ea15fcd7340475586e692bb16263197ea14ce113d"
+    },
+    {
+      "path": "drivers/power/supply/mca/Kconfig",
+      "ported_sha256": "bbaa4d14e9e28903fc2c198b2d4f09c2bfe3a029be5394865a8819914d50d1f6",
+      "reference_sha256": "820207625e87b83321edd8f7bba8a7a7e47396dc833c1075f3b835d33f5f1e7d"
+    },
+    {
+      "path": "drivers/power/supply/mca/include/mca/common/mca_adsp_glink.h",
+      "ported_sha256": "78d36729fa4a328efac49649cda6837c04626e0322449cdb989401b96ea3da82",
+      "reference_sha256": "ab859616f7735f306a8219616758316d83628b144c84bbb84b7e28552cf57ee5"
+    },
+    {
+      "path": "drivers/power/supply/mca/include/mca/common/mca_hwid.h",
+      "ported_sha256": "837d9ed07862aa5f48a84052fd04283278e57af19c2b2ea0a31fc7f5bd010317",
+      "reference_sha256": "d4c005703c492f619ce4e341d11d465111f0a49fd9940e0baf1090714e0bf0b4"
+    },
+    {
+      "path": "drivers/power/supply/mca/include/mca/common/mca_parse_dts.h",
+      "ported_sha256": "48771f0b04394377da6cf46a55967deb0bf2dd13aa33563218302d3f82fbd677",
+      "reference_sha256": "48771f0b04394377da6cf46a55967deb0bf2dd13aa33563218302d3f82fbd677"
+    },
+    {
+      "path": "drivers/power/supply/mca/include/mca/common/mca_workqueue.h",
+      "ported_sha256": "5e9b89e0539e52023002e033eaf76b95e0d433a0d5e2ca56adf6c777b77cb8d2",
+      "reference_sha256": "254e757ecafd8929a7d5884558cceca1f2dd16bd347e686a86d33b0e1b184718"
+    },
+    {
+      "path": "drivers/power/supply/mca/mca_common/Kbuild",
+      "ported_sha256": "26b530a8dbc6dfc4ce54b7dcbc6a833f9202e48066e1f6ce5343dd6eb12d94aa",
+      "reference_sha256": "36d944315245fdc7f439041c51873cbb0eefd28c3c8acd6620a42bd70b36762d"
+    },
+    {
+      "path": "drivers/power/supply/mca/mca_common/mca_adsp_glink.c",
+      "ported_sha256": "41baab1eea6361314568db4361d2ea7c20f86d430e7d808c05ea7958c0ac9cef",
+      "reference_sha256": "ef73fe02feaa79ea1b9dd203fc024ee6b8a6cf3d0a17172cc8a24dc28a5930a4"
+    },
+    {
+      "path": "drivers/power/supply/mca/mca_common/mca_glink_protocol.h",
+      "ported_sha256": "13a273aea4fef7580ab25629b1d4da800f5624fdcd2db1e6a17de317866ee21f"
+    },
+    {
+      "path": "drivers/power/supply/mca/mca_common/mca_hwid.c",
+      "ported_sha256": "1f8d4e5bdd6b859717d5ff55fdce2e8a2ed43c6b4070b7a2ce526d4981a9b482",
+      "reference_sha256": "f2babcd52b418cb92819415295b0bee401cc74cc24021b26bffe01b164523c02"
+    },
+    {
+      "path": "drivers/power/supply/mca/mca_common/mca_parse_dts.c",
+      "ported_sha256": "9a6155cb90fc3ac0e21c6fb3edadb2642b915e39831e97c3c48b9131765cccad",
+      "reference_sha256": "10e9848d20317287497ffc93bda6d079730299cd2d8eda11dc32992487f2b7e6"
+    },
+    {
+      "path": "drivers/power/supply/mca/mca_common/mca_workqueue.c",
+      "ported_sha256": "12fde2cf75a049a535cec39747124c791f636b677b1b099b8cf98f1442324c79",
+      "reference_sha256": "0fea653eba945def82a1197baf60f8f6e15f1ec05b757c143106be7d25a1d89d"
+    }
+  ]
+}

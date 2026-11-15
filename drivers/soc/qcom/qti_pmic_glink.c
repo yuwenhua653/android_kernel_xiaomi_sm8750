@@ -18,6 +18,7 @@
 #include <linux/rpmsg.h>
 #include <linux/slab.h>
 #include <linux/spinlock.h>
+#include <linux/srcu.h>
 #include <linux/workqueue.h>
 #include <linux/remoteproc/qcom_rproc.h>
 #include <linux/soc/qcom/pdr.h>
@@ -125,6 +126,7 @@ struct pmic_glink_buf {
 	u8			buf[];
 };
 
+DEFINE_STATIC_SRCU(pmic_glink_rx_srcu);
 static LIST_HEAD(pmic_glink_dev_list);
 static DEFINE_MUTEX(pmic_glink_dev_lock);
 
@@ -387,6 +389,8 @@ int pmic_glink_unregister_client(struct pmic_glink_client *client)
 	idr_remove(&client->pgdev->client_idr, client->id);
 	mutex_unlock(&client->pgdev->client_lock);
 
+	/* IDR lookup and msg_cb may already be running on the receive worker. */
+	synchronize_srcu(&pmic_glink_rx_srcu);
 	pmic_glink_dbg(client->pgdev, "Unregistered client %s\n", client->name);
 	kfree(client->name);
 	kfree(client);
@@ -399,8 +403,12 @@ static void pmic_glink_rx_callback(struct pmic_glink_dev *pgdev,
 {
 	struct pmic_glink_client *client;
 	struct pmic_glink_hdr *hdr;
+	int idx;
 
+	if (pbuf->len < sizeof(*hdr))
+		return;
 	hdr = (struct pmic_glink_hdr *)pbuf->buf;
+	idx = srcu_read_lock(&pmic_glink_rx_srcu);
 
 	mutex_lock(&pgdev->client_lock);
 	client = idr_find(&pgdev->client_idr, hdr->owner);
@@ -408,7 +416,7 @@ static void pmic_glink_rx_callback(struct pmic_glink_dev *pgdev,
 
 	if (!client || !client->msg_cb) {
 		pr_err("No client present for %u\n", hdr->owner);
-		return;
+		goto unlock;
 	}
 
 	if (pgdev->log_enable) {
@@ -420,6 +428,8 @@ static void pmic_glink_rx_callback(struct pmic_glink_dev *pgdev,
 	}
 
 	client->msg_cb(client->priv, pbuf->buf, pbuf->len);
+unlock:
+	srcu_read_unlock(&pmic_glink_rx_srcu, idx);
 }
 
 static void pmic_glink_rx_work(struct work_struct *work)
@@ -449,7 +459,7 @@ static int pmic_glink_rpmsg_callback(struct rpmsg_device *rpdev, void *data,
 	struct pmic_glink_buf *pbuf;
 	unsigned long flags;
 
-	if (len < sizeof(struct pmic_glink_hdr)) {
+	if (len < (int)sizeof(struct pmic_glink_hdr)) {
 		pr_err("Received length %d less than header size: %zu\n", len,
 			sizeof(struct pmic_glink_hdr));
 		return -EINVAL;

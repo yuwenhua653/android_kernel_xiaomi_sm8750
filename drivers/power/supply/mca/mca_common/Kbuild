@@ -1,0 +1,3 @@
+# SPDX-License-Identifier: GPL-2.0-only
+obj-$(CONFIG_XIAOMI_MCA_CORE) += mca_parse_dts.o mca_hwid.o mca_workqueue.o
+obj-$(CONFIG_XIAOMI_MCA_GLINK) += mca_adsp_glink.o

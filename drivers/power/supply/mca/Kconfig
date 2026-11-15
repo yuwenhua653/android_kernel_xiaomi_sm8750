@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: GPL-2.0-only
+config XIAOMI_MCA_CORE
+	tristate "Annibale MCA common helpers (experimental)"
+	depends on EXPERT && OF && MI_HARDWARE_ID
+	help
+	  Build the MCA device-tree parser, hardware identity and workqueue.
+	  These are common helpers, not a battery supply or charging policy.
+	  Leave disabled until the remaining Annibale charging stack is ready.
+
+config XIAOMI_MCA_GLINK
+	tristate "Annibale MCA ADSP transport (experimental)"
+	depends on XIAOMI_MCA_CORE && QTI_PMIC_GLINK
+	depends on QTI_BATTERY_CHARGER=n
+	help
+	  Build the two-owner MCA charging/auxiliary PMIC Glink transport.
+	  This occupies the same owners as the standard battery charger client.
+	  It must not be selected alongside that client. No charging strategy
+	  or current/voltage policy is enabled by this transport alone.

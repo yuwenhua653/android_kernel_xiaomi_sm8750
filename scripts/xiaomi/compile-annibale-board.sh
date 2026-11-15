@@ -23,8 +23,8 @@ if ! command -v bc >/dev/null && [[ -x "$HOST_TOOLS_BIN/gavinhoward-bc" ]]; then
 fi
 JOBS=${JOBS:-3}
 PHASE=${1:-all}
-if [[ "$PHASE" != all && "$PHASE" != prepare && "$PHASE" != objects && "$PHASE" != fingerprint ]]; then
-	printf 'Usage: %s [all|prepare|objects|fingerprint]\n' "$0" >&2
+if [[ "$PHASE" != all && "$PHASE" != prepare && "$PHASE" != objects && "$PHASE" != fingerprint && "$PHASE" != mca ]]; then
+	printf 'Usage: %s [all|prepare|objects|fingerprint|mca]\n' "$0" >&2
 	exit 2
 fi
 for tool in clang ld.lld llvm-ar bc gcc bison "$M4"; do
@@ -42,6 +42,10 @@ if [[ "$PHASE" != objects ]]; then
 	if [[ "$PHASE" == fingerprint ]]; then
 		KCONFIG_CONFIG="$OUT_DIR/.config" scripts/kconfig/merge_config.sh -m \
 			"$OUT_DIR/.config" arch/arm64/configs/vendor/annibale_fingerprint_test.config
+	fi
+	if [[ "$PHASE" == mca ]]; then
+		KCONFIG_CONFIG="$OUT_DIR/.config" scripts/kconfig/merge_config.sh -m \
+			"$OUT_DIR/.config" arch/arm64/configs/vendor/annibale_mca_test.config
 	fi
 	"${KMAKE[@]}" olddefconfig modules_prepare 2>&1 | tee "$OUT_DIR/prepare.log"
 fi
@@ -64,6 +68,14 @@ if [[ "$PHASE" != prepare ]]; then
 		"${KMAKE[@]}" drivers/input/fingerprint/mi_fp/ \
 			drivers/soc/qcom/panel_event_notifier.o \
 			2>&1 | tee "$OUT_DIR/fingerprint-objects.log"
+	fi
+	if [[ "$PHASE" == mca ]]; then
+		grep -qx CONFIG_XIAOMI_MCA_CORE=m "$OUT_DIR/.config"
+		grep -qx CONFIG_XIAOMI_MCA_GLINK=m "$OUT_DIR/.config"
+		grep -qx '# CONFIG_QTI_BATTERY_CHARGER is not set' "$OUT_DIR/.config"
+		"${KMAKE[@]}" drivers/power/supply/mca/ \
+			drivers/soc/qcom/qti_pmic_glink.o \
+			2>&1 | tee "$OUT_DIR/mca-objects.log"
 	fi
 	# Optional source check only: leave the saved annibale .config unchanged.
 	"${KMAKE[@]}" CONFIG_LEDS_AW21024=m drivers/leds/leds-aw21024.o \
