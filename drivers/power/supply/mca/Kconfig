@@ -16,3 +16,12 @@ config XIAOMI_MCA_GLINK
 	  This occupies the same owners as the standard battery charger client.
 	  It must not be selected alongside that client. No charging strategy
 	  or current/voltage policy is enabled by this transport alone.
+
+config XIAOMI_MCA_SERVICES
+	tristate "Annibale MCA charging and fuel-gauge interfaces (experimental)"
+	depends on XIAOMI_MCA_CORE && SYSFS
+	help
+	  Build the xm_power sysfs namespace, event notifications, charging
+	  control dispatcher and fuel-gauge callback registry. These require
+	  real hardware/policy providers; missing operations return errors.
+	  No battery power-supply driver or charging policy is supplied here.

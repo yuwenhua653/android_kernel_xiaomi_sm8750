@@ -1,0 +1,747 @@
+{
+  "schema_version": 1,
+  "scope": "R6 MCA source services and selected stock interface cross-checks; not runtime or prebuilt compatibility proof",
+  "parent_kernel_commit": "3c7c750d1583d6724af05c13c7727fb1828e01ca",
+  "source": {
+    "repository": "xiaomi-dada/android_kernel_xiaomi_sm8750",
+    "commit": "a7a6375b13e490d187c2b348d961cec39a414ad2",
+    "kind": "community reconstruction from Dada stock; not MiCode MCA source"
+  },
+  "stock_reference": {
+    "repository": "xiaomi-annibale/android_device_xiaomi_annibale-kernel",
+    "commit": "df318c6b1c81e17d4fdc0fc9333c00c4d90e928a",
+    "files": {
+      "modules/vendor_boot/mca_sysfs.ko": "64cdbf8fd76b9a2a035c636aad4fe8a09c041af5a7e9f17ab418ccf24ae86b2c",
+      "modules/vendor_boot/mca_event.ko": "43db7b4eecdb20e44c0cc9b9051a5ebe2804d0f7f0e02d123a73c95d00a3282c",
+      "modules/vendor_boot/mca_charge_interface.ko": "6e84fef8358f95b0029600b369b253a098cc0ecafa7c6093f2237b89a0b8172f",
+      "modules/vendor_boot/mca_platform_fg_ic_ops.ko": "a1f1acd4a379416f284686b5173a870f7d162a267cd6a9dedb92f4f295166d01"
+    }
+  },
+  "fuel_gauge_layout": {
+    "pointer_size": 8,
+    "member_count": 67,
+    "checked_dispatch_count": 66,
+    "dispatches": [
+      {
+        "function": "platform_fg_ops_probe_ok",
+        "member": "fg_ic_probe_ok",
+        "expected_offset": 0,
+        "stock_function_pointer_offsets": [
+          0
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_batt_info",
+        "member": "fg_ic_get_batt_info",
+        "expected_offset": 8,
+        "stock_function_pointer_offsets": [
+          8
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_soc",
+        "member": "fg_ic_get_soc",
+        "expected_offset": 16,
+        "stock_function_pointer_offsets": [
+          16
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_rsoc",
+        "member": "fg_ic_get_rsoc",
+        "expected_offset": 24,
+        "stock_function_pointer_offsets": [
+          24
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_curr",
+        "member": "fg_ic_get_curr",
+        "expected_offset": 32,
+        "stock_function_pointer_offsets": [
+          32
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_volt",
+        "member": "fg_ic_get_volt",
+        "expected_offset": 40,
+        "stock_function_pointer_offsets": [
+          40
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_set_temp",
+        "member": "fg_ic_set_temp",
+        "expected_offset": 48,
+        "stock_function_pointer_offsets": [
+          48
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_temp",
+        "member": "fg_ic_get_temp",
+        "expected_offset": 56,
+        "stock_function_pointer_offsets": [
+          56
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_original_temp",
+        "member": "fg_ic_get_original_temp",
+        "expected_offset": 64,
+        "stock_function_pointer_offsets": [
+          64
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_set_iterm",
+        "member": "fg_ic_set_iterm",
+        "expected_offset": 72,
+        "stock_function_pointer_offsets": [
+          72
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_charge_status",
+        "member": "fg_ic_get_charge_status",
+        "expected_offset": 80,
+        "stock_function_pointer_offsets": [
+          80
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_rm",
+        "member": "fg_ic_get_rm",
+        "expected_offset": 88,
+        "stock_function_pointer_offsets": [
+          88
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_fastcharge",
+        "member": "fg_ic_get_fastcharge",
+        "expected_offset": 96,
+        "stock_function_pointer_offsets": [
+          96
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_set_fastcharge",
+        "member": "fg_ic_set_fastcharge",
+        "expected_offset": 104,
+        "stock_function_pointer_offsets": [
+          104
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_chg_vol",
+        "member": "fg_ic_get_chg_vol",
+        "expected_offset": 112,
+        "stock_function_pointer_offsets": [
+          112
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_chip_ok",
+        "member": "fg_ic_get_chip_ok",
+        "expected_offset": 120,
+        "stock_function_pointer_offsets": [
+          120
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_cyclecount",
+        "member": "fg_ic_get_cyclecount",
+        "expected_offset": 128,
+        "stock_function_pointer_offsets": [
+          128
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_tte",
+        "member": "fg_ic_get_tte",
+        "expected_offset": 144,
+        "stock_function_pointer_offsets": [
+          144
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_ttf",
+        "member": "fg_ic_get_ttf",
+        "expected_offset": 152,
+        "stock_function_pointer_offsets": [
+          152
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_fcc",
+        "member": "fg_ic_get_fcc",
+        "expected_offset": 160,
+        "stock_function_pointer_offsets": [
+          160
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_full_design",
+        "member": "fg_ic_get_full_design",
+        "expected_offset": 168,
+        "stock_function_pointer_offsets": [
+          168
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_decimal_rate",
+        "member": "fg_ic_get_decimal_rate",
+        "expected_offset": 176,
+        "stock_function_pointer_offsets": [
+          176
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_decimal",
+        "member": "fg_ic_get_decimal",
+        "expected_offset": 184,
+        "stock_function_pointer_offsets": [
+          184
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_soh",
+        "member": "fg_ic_get_soh",
+        "expected_offset": 192,
+        "stock_function_pointer_offsets": [
+          192
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_temp_max",
+        "member": "fg_ic_get_temp_max",
+        "expected_offset": 200,
+        "stock_function_pointer_offsets": [
+          200
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_time_ot",
+        "member": "fg_ic_get_time_ot",
+        "expected_offset": 208,
+        "stock_function_pointer_offsets": [
+          208
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_batt_cell_info",
+        "member": "fg_ic_get_batt_cell_info",
+        "expected_offset": 216,
+        "stock_function_pointer_offsets": [
+          216
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_set_verify_digest",
+        "member": "fg_ic_set_verify_digest",
+        "expected_offset": 224,
+        "stock_function_pointer_offsets": [
+          224
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_verify_digest",
+        "member": "fg_ic_get_verify_digest",
+        "expected_offset": 232,
+        "stock_function_pointer_offsets": [
+          232
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_set_authentic",
+        "member": "fg_ic_set_authentic",
+        "expected_offset": 240,
+        "stock_function_pointer_offsets": [
+          240
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_authentic",
+        "member": "fg_ic_get_authentic",
+        "expected_offset": 248,
+        "stock_function_pointer_offsets": [
+          248
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_error_state",
+        "member": "fg_ic_get_error_state",
+        "expected_offset": 256,
+        "stock_function_pointer_offsets": [
+          256
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_cutoff_voltage",
+        "member": "fg_ic_get_cutoff_voltage",
+        "expected_offset": 264,
+        "stock_function_pointer_offsets": [
+          264
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_set_cutoff_voltage",
+        "member": "fg_ic_set_cutoff_voltage",
+        "expected_offset": 272,
+        "stock_function_pointer_offsets": [
+          272
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_dod_count",
+        "member": "fg_ic_get_dod_count",
+        "expected_offset": 280,
+        "stock_function_pointer_offsets": [
+          280
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_count_level1",
+        "member": "fg_ic_get_count_level1",
+        "expected_offset": 288,
+        "stock_function_pointer_offsets": [
+          288
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_count_level2",
+        "member": "fg_ic_get_count_level2",
+        "expected_offset": 296,
+        "stock_function_pointer_offsets": [
+          288,
+          296
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_count_level3",
+        "member": "fg_ic_get_count_level3",
+        "expected_offset": 304,
+        "stock_function_pointer_offsets": [
+          304
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_count_lowtemp",
+        "member": "fg_ic_get_count_lowtemp",
+        "expected_offset": 312,
+        "stock_function_pointer_offsets": [
+          312
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_set_clear_count_data",
+        "member": "fg_ic_set_clear_count_data",
+        "expected_offset": 320,
+        "stock_function_pointer_offsets": [
+          320
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_adapt_power",
+        "member": "fg_ic_get_adapt_power",
+        "expected_offset": 328,
+        "stock_function_pointer_offsets": [
+          328
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_aged_flag",
+        "member": "fg_ic_get_aged_flag",
+        "expected_offset": 336,
+        "stock_function_pointer_offsets": [
+          336
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_isc_alert_level",
+        "member": "fg_ic_get_isc_alert_level",
+        "expected_offset": 344,
+        "stock_function_pointer_offsets": [
+          344
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_soa_alert_level",
+        "member": "fg_ic_get_soa_alert_level",
+        "expected_offset": 352,
+        "stock_function_pointer_offsets": [
+          352
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_raw_soc",
+        "member": "fg_ic_get_raw_soc",
+        "expected_offset": 360,
+        "stock_function_pointer_offsets": [
+          360
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_update_fw",
+        "member": "fg_ic_update_fw",
+        "expected_offset": 368,
+        "stock_function_pointer_offsets": [
+          368
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_device_name",
+        "member": "fg_ic_get_device_name",
+        "expected_offset": 376,
+        "stock_function_pointer_offsets": [
+          376
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_temp_min",
+        "member": "fg_ic_get_temp_min",
+        "expected_offset": 384,
+        "stock_function_pointer_offsets": [
+          384
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_set_force_report_full",
+        "member": "fg_ic_set_force_report_full",
+        "expected_offset": 392,
+        "stock_function_pointer_offsets": [
+          392
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_fc",
+        "member": "fg_ic_get_fc",
+        "expected_offset": 400,
+        "stock_function_pointer_offsets": [
+          400
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_set_co",
+        "member": "fg_ic_set_co",
+        "expected_offset": 408,
+        "stock_function_pointer_offsets": [
+          408
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_calibration_ffc_iterm",
+        "member": "fg_ic_get_calibration_ffc_iterm",
+        "expected_offset": 416,
+        "stock_function_pointer_offsets": [
+          416
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_real_supplement_energy",
+        "member": "fg_ic_get_real_supplement_energy",
+        "expected_offset": 424,
+        "stock_function_pointer_offsets": [
+          424
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_calibration_charge_energy",
+        "member": "fg_ic_get_calibration_charge_energy",
+        "expected_offset": 432,
+        "stock_function_pointer_offsets": [
+          432
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_fl4p0_enable_check",
+        "member": "fg_ic_fl4p0_enable_check",
+        "expected_offset": 440,
+        "stock_function_pointer_offsets": [
+          440
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_ui_soh",
+        "member": "fg_ic_get_ui_soh",
+        "expected_offset": 448,
+        "stock_function_pointer_offsets": [
+          448
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_qbg_send_chg_data",
+        "member": "fg_ic_qbg_send_chg_data",
+        "expected_offset": 456,
+        "stock_function_pointer_offsets": [
+          456
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_pack_vendor",
+        "member": "fg_ic_get_pack_vendor",
+        "expected_offset": 464,
+        "stock_function_pointer_offsets": [
+          464
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_calc_rvalue",
+        "member": "fg_ic_get_calc_rvalue",
+        "expected_offset": 472,
+        "stock_function_pointer_offsets": [
+          472
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_ota_update_flag",
+        "member": "fg_ic_get_ota_update_flag",
+        "expected_offset": 480,
+        "stock_function_pointer_offsets": [
+          480
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_ota_update_check",
+        "member": "fg_ic_ota_update_check",
+        "expected_offset": 488,
+        "stock_function_pointer_offsets": [
+          488
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_average_current",
+        "member": "fg_ic_get_average_current",
+        "expected_offset": 496,
+        "stock_function_pointer_offsets": [
+          496
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_batt_abnormal_info",
+        "member": "fg_ic_get_batt_abnormal_info",
+        "expected_offset": 504,
+        "stock_function_pointer_offsets": [
+          504
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_manufacturing_date",
+        "member": "fg_ic_get_manufacturing_date",
+        "expected_offset": 512,
+        "stock_function_pointer_offsets": [
+          512
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_set_first_usage_date",
+        "member": "fg_ic_set_first_usage_date",
+        "expected_offset": 520,
+        "stock_function_pointer_offsets": [
+          520
+        ],
+        "match": true
+      },
+      {
+        "function": "platform_fg_ops_get_first_usage_date",
+        "member": "fg_ic_get_first_usage_date",
+        "expected_offset": 528,
+        "stock_function_pointer_offsets": [
+          528
+        ],
+        "match": true
+      }
+    ]
+  },
+  "charge_interface_layout": {
+    "name_count": 19,
+    "type_name_offset": 0,
+    "data_offset": 8,
+    "set_input_suspend_offset": 16,
+    "set_charge_enable_offset": 32,
+    "set_input_current_offset": 48,
+    "set_charge_current_offset": 64,
+    "set_power_offset": 80,
+    "set_shipmode_offset": 96,
+    "get_shipmode_offset": 104,
+    "suspend_notify_chain": 2,
+    "suspend_notify_event": 17
+  },
+  "event_chain_count": 10,
+  "stock_exports_not_implemented": [
+    "mca_debugfs_create_group",
+    "mca_event_report_multiple_uevent"
+  ],
+  "files": [
+    {
+      "path": "drivers/power/supply/mca/Kbuild",
+      "ported_sha256": "bed6b85db894f69ec1581819d1cf66c0dc0d8cf812d60dacfedf17dc4ac313d3",
+      "reference_sha256": "ad7a72f9243db6445eaf8c2ea15fcd7340475586e692bb16263197ea14ce113d"
+    },
+    {
+      "path": "drivers/power/supply/mca/Kconfig",
+      "ported_sha256": "a68dced159f7b324c1b5ea61b3f161b25af516090032ea37555092898478e62d",
+      "reference_sha256": "820207625e87b83321edd8f7bba8a7a7e47396dc833c1075f3b835d33f5f1e7d"
+    },
+    {
+      "path": "drivers/power/supply/mca/include/mca/common/mca_adsp_glink.h",
+      "ported_sha256": "78d36729fa4a328efac49649cda6837c04626e0322449cdb989401b96ea3da82",
+      "reference_sha256": "ab859616f7735f306a8219616758316d83628b144c84bbb84b7e28552cf57ee5"
+    },
+    {
+      "path": "drivers/power/supply/mca/include/mca/common/mca_charge_interface.h",
+      "ported_sha256": "40cf04b7feb91de21e50c6e87df3a37b481d5e4816aaafb7f8ef7f24f05c69ac",
+      "reference_sha256": "c47ea75a44d2e3a6f2eb419b2573b9fa2762aaa36fc957329a9eefc643c225c3"
+    },
+    {
+      "path": "drivers/power/supply/mca/include/mca/common/mca_event.h",
+      "ported_sha256": "5cdfcde39103267a89a4fd2f7650e20ff473ed83e37311bc30185aadbacbb19c",
+      "reference_sha256": "27e1036255386b046d429d530fc4d43c015a00562d4c40ba88bdb1abe6c3f41a"
+    },
+    {
+      "path": "drivers/power/supply/mca/include/mca/common/mca_hwid.h",
+      "ported_sha256": "837d9ed07862aa5f48a84052fd04283278e57af19c2b2ea0a31fc7f5bd010317",
+      "reference_sha256": "d4c005703c492f619ce4e341d11d465111f0a49fd9940e0baf1090714e0bf0b4"
+    },
+    {
+      "path": "drivers/power/supply/mca/include/mca/common/mca_parse_dts.h",
+      "ported_sha256": "48771f0b04394377da6cf46a55967deb0bf2dd13aa33563218302d3f82fbd677",
+      "reference_sha256": "48771f0b04394377da6cf46a55967deb0bf2dd13aa33563218302d3f82fbd677"
+    },
+    {
+      "path": "drivers/power/supply/mca/include/mca/common/mca_sysfs.h",
+      "ported_sha256": "6e80e846b0c134711737878b7e0461e64607c7d0d5df91bedd2c9744bb0dd08f",
+      "reference_sha256": "7c309fcfb3ff663347d166b334f45c34a70406f88db3425d5c5cae9249977d82"
+    },
+    {
+      "path": "drivers/power/supply/mca/include/mca/common/mca_workqueue.h",
+      "ported_sha256": "5e9b89e0539e52023002e033eaf76b95e0d433a0d5e2ca56adf6c777b77cb8d2",
+      "reference_sha256": "254e757ecafd8929a7d5884558cceca1f2dd16bd347e686a86d33b0e1b184718"
+    },
+    {
+      "path": "drivers/power/supply/mca/include/mca/platform/platform_fg_ic_ops.h",
+      "ported_sha256": "601274b24571a2247152f7b6aee1cb7473378da739688dd88cb063bcd86b502e",
+      "reference_sha256": "f1fdcbdf08259ea5712ade7c99edb85b374f7af5f7c7d998e8d74a0212e8aae5"
+    },
+    {
+      "path": "drivers/power/supply/mca/mca_common/Kbuild",
+      "ported_sha256": "9a4249653be455109cb0275d439fe18abd1e396e167538d8efc9d4ea3dccdd8f",
+      "reference_sha256": "36d944315245fdc7f439041c51873cbb0eefd28c3c8acd6620a42bd70b36762d"
+    },
+    {
+      "path": "drivers/power/supply/mca/mca_common/mca_adsp_glink.c",
+      "ported_sha256": "41baab1eea6361314568db4361d2ea7c20f86d430e7d808c05ea7958c0ac9cef",
+      "reference_sha256": "ef73fe02feaa79ea1b9dd203fc024ee6b8a6cf3d0a17172cc8a24dc28a5930a4"
+    },
+    {
+      "path": "drivers/power/supply/mca/mca_common/mca_charge_interface.c",
+      "ported_sha256": "3a960149bc7de2c9907340a89cd7c8a1569066c0b3b79bbc611140189c356048",
+      "reference_sha256": "390fb20e6f4314a2e8d5917968b4428db41314523dfd86dba7cdc6e3c34c73d2"
+    },
+    {
+      "path": "drivers/power/supply/mca/mca_common/mca_event.c",
+      "ported_sha256": "6c0a0f15215fa04f35cdcf090214b0f19309bdaed1dea5a9ecb0a97d0303e010",
+      "reference_sha256": "0393982d2a4a72360901c2f1fdd73a5ec345e29c7e986e9a55f899f64c8b4367"
+    },
+    {
+      "path": "drivers/power/supply/mca/mca_common/mca_glink_protocol.h",
+      "ported_sha256": "13a273aea4fef7580ab25629b1d4da800f5624fdcd2db1e6a17de317866ee21f"
+    },
+    {
+      "path": "drivers/power/supply/mca/mca_common/mca_hwid.c",
+      "ported_sha256": "1f8d4e5bdd6b859717d5ff55fdce2e8a2ed43c6b4070b7a2ce526d4981a9b482",
+      "reference_sha256": "f2babcd52b418cb92819415295b0bee401cc74cc24021b26bffe01b164523c02"
+    },
+    {
+      "path": "drivers/power/supply/mca/mca_common/mca_parse_dts.c",
+      "ported_sha256": "9a6155cb90fc3ac0e21c6fb3edadb2642b915e39831e97c3c48b9131765cccad",
+      "reference_sha256": "10e9848d20317287497ffc93bda6d079730299cd2d8eda11dc32992487f2b7e6"
+    },
+    {
+      "path": "drivers/power/supply/mca/mca_common/mca_sysfs.c",
+      "ported_sha256": "e9900f8ce4cf519736a181af98a19281e65dd4c47df91505f49601dcb8f5a609",
+      "reference_sha256": "a6cc249a8916f229e1bd55da072a2f6721a373187a2f92e50d75825fcdced980"
+    },
+    {
+      "path": "drivers/power/supply/mca/mca_common/mca_workqueue.c",
+      "ported_sha256": "12fde2cf75a049a535cec39747124c791f636b677b1b099b8cf98f1442324c79",
+      "reference_sha256": "0fea653eba945def82a1197baf60f8f6e15f1ec05b757c143106be7d25a1d89d"
+    },
+    {
+      "path": "drivers/power/supply/mca/mca_platform/Kbuild",
+      "ported_sha256": "814346d8e04ead1f218e121e0209f91a39bb3676127972fbd5d423aad323ebe2",
+      "reference_sha256": "8aa806aff5f45b0c494d939ca748639d0a738822c5d252551710cbc57d2196b4"
+    },
+    {
+      "path": "drivers/power/supply/mca/mca_platform/mca_platform_fg_ic_ops.c",
+      "ported_sha256": "157f4ce92d5484cff8fb95905d91757202e13c88c0968beb556db98a91ec3f52",
+      "reference_sha256": "269b726f91086dd235d833bb045fe68938b1ffab49009723ee87551dc711f9be"
+    }
+  ]
+}

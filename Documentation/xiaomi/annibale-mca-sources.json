@@ -62,13 +62,15 @@
   "files": [
     {
       "path": "drivers/power/supply/mca/Kbuild",
-      "ported_sha256": "b5680c7977b4eec7f1d744bb5a8790220039fab354568a5c6976932b905a0131",
-      "reference_sha256": "ad7a72f9243db6445eaf8c2ea15fcd7340475586e692bb16263197ea14ce113d"
+      "ported_sha256": "bed6b85db894f69ec1581819d1cf66c0dc0d8cf812d60dacfedf17dc4ac313d3",
+      "reference_sha256": "ad7a72f9243db6445eaf8c2ea15fcd7340475586e692bb16263197ea14ce113d",
+      "updated_in": "R6 service integration"
     },
     {
       "path": "drivers/power/supply/mca/Kconfig",
-      "ported_sha256": "bbaa4d14e9e28903fc2c198b2d4f09c2bfe3a029be5394865a8819914d50d1f6",
-      "reference_sha256": "820207625e87b83321edd8f7bba8a7a7e47396dc833c1075f3b835d33f5f1e7d"
+      "ported_sha256": "a68dced159f7b324c1b5ea61b3f161b25af516090032ea37555092898478e62d",
+      "reference_sha256": "820207625e87b83321edd8f7bba8a7a7e47396dc833c1075f3b835d33f5f1e7d",
+      "updated_in": "R6 service integration"
     },
     {
       "path": "drivers/power/supply/mca/include/mca/common/mca_adsp_glink.h",
@@ -92,8 +94,9 @@
     },
     {
       "path": "drivers/power/supply/mca/mca_common/Kbuild",
-      "ported_sha256": "26b530a8dbc6dfc4ce54b7dcbc6a833f9202e48066e1f6ce5343dd6eb12d94aa",
-      "reference_sha256": "36d944315245fdc7f439041c51873cbb0eefd28c3c8acd6620a42bd70b36762d"
+      "ported_sha256": "9a4249653be455109cb0275d439fe18abd1e396e167538d8efc9d4ea3dccdd8f",
+      "reference_sha256": "36d944315245fdc7f439041c51873cbb0eefd28c3c8acd6620a42bd70b36762d",
+      "updated_in": "R6 service integration"
     },
     {
       "path": "drivers/power/supply/mca/mca_common/mca_adsp_glink.c",

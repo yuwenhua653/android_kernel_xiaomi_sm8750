@@ -65,7 +65,9 @@ MiCode Wi-Fi SAR GPIO interface. P11 fingerprint is an explicit, default-off
 experimental candidate. See [annibale-peripherals.md](annibale-peripherals.md)
 for provenance, configuration, loader requirements and outstanding qualification.
 R5 adds four default-off MCA common/transport candidates; see
-[annibale-mca.md](annibale-mca.md). Charging still needs the remaining MCA
+[annibale-mca.md](annibale-mca.md). R6 adds the
+[charging and fuel-gauge services](annibale-mca-services.md), also default-off.
+Charging still needs the remaining MCA
 policy, power-supply and HAL integration. No fabricated hardware identities
 or dummy hardware implementations are supplied.
 

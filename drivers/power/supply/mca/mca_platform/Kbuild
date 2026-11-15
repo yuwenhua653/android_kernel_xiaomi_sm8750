@@ -1,0 +1,2 @@
+# SPDX-License-Identifier: GPL-2.0-only
+obj-$(CONFIG_XIAOMI_MCA_SERVICES) += mca_platform_fg_ic_ops.o

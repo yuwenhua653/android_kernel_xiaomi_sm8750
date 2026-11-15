@@ -71,6 +71,7 @@ if [[ "$PHASE" != prepare ]]; then
 	fi
 	if [[ "$PHASE" == mca ]]; then
 		grep -qx CONFIG_XIAOMI_MCA_CORE=m "$OUT_DIR/.config"
+		grep -qx CONFIG_XIAOMI_MCA_SERVICES=m "$OUT_DIR/.config"
 		grep -qx CONFIG_XIAOMI_MCA_GLINK=m "$OUT_DIR/.config"
 		grep -qx '# CONFIG_QTI_BATTERY_CHARGER is not set' "$OUT_DIR/.config"
 		"${KMAKE[@]}" drivers/power/supply/mca/ \

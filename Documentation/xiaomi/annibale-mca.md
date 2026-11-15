@@ -1,5 +1,8 @@
 # Annibale MCA foundation (R5)
 
+[R6](annibale-mca-services.md) extends this foundation with sysfs, event,
+charging-control and fuel-gauge dispatch services, still default-off.
+
 This batch adds four experimental components for Redmi K90 / annibale:
 `mca_parse_dts`, `mca_hwid`, `mca_workqueue`, and `mca_adsp_glink`. It provides
 common helpers and communication with ADSP firmware, **not a complete charging
