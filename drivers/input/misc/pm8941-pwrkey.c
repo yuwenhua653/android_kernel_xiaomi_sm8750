@@ -60,6 +60,7 @@ struct pm8941_data {
 	bool		supports_ps_hold_poff_config;
 	bool		supports_debounce_config;
 	bool		has_pon_pbs;
+	bool		is_bark;
 	const char	*name;
 	const char	*phys;
 };
@@ -150,6 +151,17 @@ static irqreturn_t pm8941_pwrkey_irq(int irq, void *_data)
 	struct pm8941_pwrkey *pwrkey = _data;
 	unsigned int sts;
 	int err;
+
+#if IS_ENABLED(CONFIG_INPUT_PM8941_PWRKEY_XIAOMI)
+	/* Bark IRQs are diagnostic events, not a second power-key device. */
+	if (pwrkey->data->is_bark) {
+		err = regmap_read(pwrkey->regmap,
+				  pwrkey->baseaddr + PON_RT_STS, &sts);
+		if (!err && (sts & pwrkey->data->status_bit))
+			dev_dbg(pwrkey->dev, "power-key bark asserted\n");
+		return IRQ_HANDLED;
+	}
+#endif
 
 	if (pwrkey->sw_debounce_time_us) {
 		if (ktime_before(ktime_get(), pwrkey->sw_debounce_end_time)) {
@@ -460,11 +472,34 @@ static const struct pm8941_data pon_gen3_resin_data = {
 	.has_pon_pbs = true,
 };
 
+#if IS_ENABLED(CONFIG_INPUT_PM8941_PWRKEY_XIAOMI)
+/* MiCode annibale-w-oss: both bark IRQs sample the KPDPWR status bit. */
+static const struct pm8941_data pon_gen3_pwrkey_bark_data = {
+	.status_bit = PON_GEN3_KPDPWR_N_SET,
+	.name = "pmic_pwrkey_bark",
+	.phys = "pmic_pwrkey_bark/input0",
+	.has_pon_pbs = true,
+	.is_bark = true,
+};
+
+static const struct pm8941_data pon_gen3_pwrkey_resin_bark_data = {
+	.status_bit = PON_GEN3_KPDPWR_N_SET,
+	.name = "pmic_pwrkey_resin_bark",
+	.phys = "pmic_pwrkey_resin_bark/input0",
+	.has_pon_pbs = true,
+	.is_bark = true,
+};
+#endif
+
 static const struct of_device_id pm8941_pwr_key_id_table[] = {
 	{ .compatible = "qcom,pm8941-pwrkey", .data = &pwrkey_data },
 	{ .compatible = "qcom,pm8941-resin", .data = &resin_data },
 	{ .compatible = "qcom,pmk8350-pwrkey", .data = &pon_gen3_pwrkey_data },
 	{ .compatible = "qcom,pmk8350-resin", .data = &pon_gen3_resin_data },
+#if IS_ENABLED(CONFIG_INPUT_PM8941_PWRKEY_XIAOMI)
+	{ .compatible = "qcom,pmk8350-pwrkey-bark", .data = &pon_gen3_pwrkey_bark_data },
+	{ .compatible = "qcom,pmk8350-pwrkey-resin-bark", .data = &pon_gen3_pwrkey_resin_bark_data },
+#endif
 	{ }
 };
 MODULE_DEVICE_TABLE(of, pm8941_pwr_key_id_table);

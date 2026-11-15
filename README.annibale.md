@@ -3,8 +3,8 @@
 本项目以 LineageOS 的 Qualcomm SM8750 三仓库源码为基线，逐步移植
 MiCode `annibale-w-oss` 的 Redmi K90 设备支持。
 
-当前为初始化阶段。尚未完成 K90 内核、外部模块及完整 DTBO 编译，
-没有可刷入版本，也未验证启动或硬件功能。
+当前为第一批驱动和设备树移植阶段。尚未完成整核、全部模块链接及
+最终镜像装配，没有可刷入版本，也未验证启动或硬件功能。
 
 ## 仓库与目录
 
@@ -44,22 +44,37 @@ git clone -b annibale https://github.com/yuwenhua653/android_kernel_xiaomi_sm875
 外部模块的 Soong import 已迁至 `kernel/xiaomi/sm8750`；核心的模块
 头文件路径及设备树软链接使用兄弟相对路径，不需要批量替换。
 
-## 适配进度与后续工作
+## 第一批移植
 
-- 已建立三个 Fork、本地工作目录和统一开发分支。
-- 已完成目录迁移所需的 Soong namespace 调整及静态检查。
-- 尚未导入 MiCode K90 硬件补丁。参考核心提交为
-  `MiCode/Xiaomi_Kernel_OpenSource@f66f8c8bcbe38044fab61d44ea7f7c224f82b3ea`，
-  设备树为 `MiCode/kernel_devicetree@32fd4ddcedd46baa579643b3894c37c0fccccb91`。
-- DT 依赖初步分析：七个新增板级 DTS/DTSI 之外，还需迁移真实的
-  `mca_adsp_glink` 与 `usb_nop_phy` 节点、显式 USB PHY 宏头文件依赖，
-  并逐项审查 PMIC、热管理和外设差异；不能仅复制 overlay 即宣称支持 K90。
-- 需要补齐/核对 HWID、MCA 充电、Goodix 触摸及其他设备专属驱动。
-- 需要接入 ROM 内核源码编译、外部模块、DTB/DTBO 和模块分区装配。
-- 继承的 Bazel 文件仍有 `//vendor/qcom/sm8750-*` 标签；尚未配置其
-  独立工作区映射，当前不提供已验证的 Bazel 构建命令。
-- 核心 Makefile 继承的 `video-kernel` 头文件目录与模块仓库中的
-  `video-driver` 名称不一致，需要在模块构建接入时继续核查。
+| 仓库 | 已加入内容 |
+| --- | --- |
+| 核心 | 小米 Mi T1 GPIO、独立 Xiaomi SPI IR、可选 AW21024、受配置开关控制的 PMIC bark IRQ 支持、Annibale 配置片段 |
+| 模块 | 官方同族 Goodix 9916K / xiaomi_touch 移植候选（默认关闭）；P11 相机 CSIPHY 寄存器表和匹配项 |
+| 设备树 | Annibale SoC、充电描述、触摸、红外、NFC、PMIC、热管理、相机和 P11 显示专属 DTS；保持 LOS 公共 DTS 不变 |
 
-每次硬件移植应记录来源提交，并将编译检查、DT 合并检查和真机验证
-分别记录。完整构建及真机验证前，不发布可刷入版本。
+核心来源为 `MiCode/Xiaomi_Kernel_OpenSource` 的 `annibale-w-oss`：
+`f66f8c8bcbe38044fab61d44ea7f7c224f82b3ea`。触摸来源为官方
+`warsaw-w-oss` 同族实现，**不是未公开的 Annibale p11 目录**，仍待真机验证。
+详细来源、改动和验证命令分别见各仓库中的移植文档：
+
+- 核心：`Documentation/xiaomi/`、`scripts/xiaomi/compile-annibale-board.sh`。
+- 模块：`Documentation/xiaomi/annibale-import.md`、
+  `qcom/opensource/camera-kernel/Documentation/annibale-csiphy.md`。
+- 设备树：`docs/annibale-import.md` 和来源清单。
+
+`arch/arm64/configs/vendor/annibale_board.config` 仅启用已接入的板级驱动，
+不冒充完整量产配置。AW21024 尚无确认的 Annibale DT 节点，保持默认关闭。
+触摸必须明确选择其独立 Kconfig/Kbuild，并使用 Annibale 的固件及配置；
+不附带其他机型的固件、THP 参数或归一化校准文件。
+
+## 尚待完成
+
+- 补齐/核对 HWID、MCA 充电及指纹等缺失源码和依赖；DT 中有对应节点不代表驱动已可用。
+- 验证原厂用户空间接口、触摸固件与硬件版本，接入全部显示/相机所需小米扩展。
+- 接入 ROM 内核源码编译、外部模块、DTB/DTBO 与模块分区装配。
+- 完成真实 `Module.symvers` 下的模块链接、符号/ABI 核查和整核构建。
+- 继承的 Bazel 文件仍有 `//vendor/qcom/sm8750-*` 标签；尚未配置其独立工作区映射。
+- 核心 Makefile 的 `video-kernel` 头文件目录与模块仓库 `video-driver` 名称不一致，后续构建接入时核查。
+
+定向目标文件编译、DT overlay 合并及真机功能是不同的验证阶段。
+当前检查不能证明启动、充电、相机或触摸已正常，完整构建及真机验证前不发布刷机包。

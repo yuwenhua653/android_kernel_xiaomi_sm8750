@@ -174,6 +174,17 @@ config INPUT_PM8941_PWRKEY
 	  To compile this driver as a module, choose M here: the module
 	  will be called pm8941-pwrkey.
 
+config INPUT_PM8941_PWRKEY_XIAOMI
+	bool "Xiaomi PMIC power-key bark IRQ support"
+	depends on INPUT_PM8941_PWRKEY && OF
+	help
+	  Bind the additional PMK8350-compatible bark IRQ devices published
+	  in Xiaomi annibale device trees. Bark IRQs keep their wakeup handling
+	  but do not generate duplicate power-key input events. Vendor display
+	  callbacks and task-dump notifiers are not provided by this option.
+
+	  Leave this disabled for devices without these Xiaomi bark nodes.
+
 config INPUT_PM8XXX_VIBRATOR
 	tristate "Qualcomm PM8XXX vibrator support"
 	depends on MFD_PM8XXX || MFD_SPMI_PMIC

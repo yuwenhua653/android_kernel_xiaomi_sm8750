@@ -928,6 +928,13 @@ config LEDS_ACER_A500
 	  This option enables support for the Power Button LED of
 	  Acer Iconia Tab A500.
 
+config LEDS_AW21024
+	tristate "AW21024 LED controller"
+	depends on LEDS_CLASS && I2C && GPIOLIB && OF
+	help
+	  Awinic AW21024 I2C LED controller published in Xiaomi's
+	  annibale source release. Enable only for a matching DT node.
+
 config LEDS_QTI_TRI_LED
 	tristate "LED support for Qualcomm Technologies, Inc. TRI_LED"
 	depends on LEDS_CLASS && MFD_SPMI_PMIC && PWM && OF

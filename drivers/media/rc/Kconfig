@@ -374,6 +374,15 @@ config IR_SPI
 	  To compile this driver as a module, choose M here: the module will be
 	  called ir-spi.
 
+config IR_SPI_XIAOMI
+	tristate "Xiaomi SPI IR transmitter character interface"
+	depends on SPI && OF && IR_SPI=n
+	help
+	  Xiaomi's raw SPI IR transmitter interface at /dev/ir_spi.
+	  LIRC_SET_SEND_MODE selects the transfer length in bytes, as
+	  expected by Xiaomi userspace. This is not the rc-core pulse ABI.
+	  The module is named ir-spi; it is exclusive with generic IR_SPI.
+
 config IR_STREAMZAP
 	tristate "Streamzap PC Remote IR Receiver"
 	depends on USB

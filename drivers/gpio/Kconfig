@@ -1809,6 +1809,14 @@ config GPIO_VIRTIO
 	  These virtual GPIOs can be routed to real GPIOs or attached to
 	  simulators on the host (like QEMU).
 
+config MI_T1_CHIP
+	tristate "Xiaomi Mi T1 GPIO control"
+	depends on OF && PROC_FS && COMMON_CLK
+	depends on QCOM_RPROC_COMMON
+	help
+	  Xiaomi Mi T1 GPIO control and modem restart notifications.
+	  The annibale device tree selects the board GPIO count and pins.
+
 config GPIO_SIM
 	tristate "GPIO Simulator Module"
 	select IRQ_SIM
