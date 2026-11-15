@@ -819,6 +819,9 @@ struct haptics_chip {
 	bool				hboost_enabled;
 	bool				visense_enabled;
 	bool				visense_hs_disabled;
+	bool				xiaomi_haptics;
+	bool				hboost_registered;
+	atomic_t			mi_control_busy;
 	ktime_t				pattern_start_time;
 	void				*lpass_ssr_handle;
 };
@@ -919,7 +922,7 @@ static int haptics_masked_write(struct haptics_chip *chip,
 	int rc = 0;
 	u16 addr = base + offset;
 
-	regmap_update_bits(chip->regmap, addr, mask, val);
+	rc = regmap_update_bits(chip->regmap, addr, mask, val);
 	if (rc < 0)
 		dev_err(chip->dev, "update addr %#x failed, rc=%d\n", addr, rc);
 
@@ -1312,7 +1315,7 @@ static int haptics_get_closeloop_lra_period(
 		dev_dbg(chip->dev, "tlra_ol = %#x, tlra_cl_err_sts = %#x, cal_tlra_cl_sts = %#x\n",
 				tlra_ol, tlra_cl_err_sts, cal_tlra_cl_sts);
 
-		if (cal_tlra_cl_sts == 0 || tlra_cl_err_sts == 0) {
+		if (cal_tlra_cl_sts == 0 || tlra_cl_err_sts == 0 || tlra_ol == 0) {
 			dev_warn(chip->dev, "Calibration invalid (cal=%d,err=%d),using OpenLoop period\n",
 					cal_tlra_cl_sts, tlra_cl_err_sts);
 			config->cl_t_lra_us = config->t_lra_us;
@@ -1353,6 +1356,9 @@ static int haptics_get_closeloop_lra_period(
 
 		dev_dbg(chip->dev, "last_good_tlra_cl_sts = %#x, cal_tlra_cl_sts = %#x\n",
 				last_good_tlra_cl_sts, cal_tlra_cl_sts);
+
+		if (!cal_tlra_cl_sts || !last_good_tlra_cl_sts)
+			return -EINVAL;
 
 		tmp = last_good_tlra_cl_sts * last_good_tlra_cl_sts;
 		tmp *= TLRA_AUTO_RES_AUTO_CAL_STEP_PSEC;
@@ -2090,7 +2096,7 @@ static int haptics_wait_brake_complete(struct haptics_chip *chip)
 }
 
 #define BOOST_VREG_OFF_DELAY_SECONDS	2
-static int haptics_enable_play(struct haptics_chip *chip, bool en)
+static int __haptics_enable_play(struct haptics_chip *chip, bool en)
 {
 	struct haptics_play_info *play = &chip->play;
 	int rc;
@@ -2179,6 +2185,20 @@ static int haptics_set_brake(struct haptics_chip *chip, struct brake_cfg *brake)
 	}
 
 	return 0;
+}
+
+/* Serialize Xiaomi frequency programming against new SPMI playback. */
+static int haptics_enable_play(struct haptics_chip *chip, bool en)
+{
+	int rc;
+
+	if (!chip->xiaomi_haptics || !en)
+		return __haptics_enable_play(chip, en);
+	if (atomic_cmpxchg(&chip->mi_control_busy, 0, 1))
+		return -EBUSY;
+	rc = __haptics_enable_play(chip, en);
+	atomic_set_release(&chip->mi_control_busy, 0);
+	return rc;
 }
 
 static int haptics_set_pattern(struct haptics_chip *chip,
@@ -2615,7 +2635,7 @@ static int haptics_set_fifo(struct haptics_chip *chip, struct fifo_cfg *fifo)
 static int haptics_load_constant_effect(struct haptics_chip *chip, u8 amplitude)
 {
 	struct haptics_play_info *play = &chip->play;
-	u32 hdrm_mv, vmax_mv = chip->config.vmax_mv;
+	u32 hdrm_mv, vmax_mv;
 	int rc = 0;
 
 	mutex_lock(&chip->play.lock);
@@ -2624,6 +2644,8 @@ static int haptics_load_constant_effect(struct haptics_chip *chip, u8 amplitude)
 		rc = -EBUSY;
 		goto unlock;
 	}
+
+	vmax_mv = chip->config.vmax_mv;
 
 	/* No effect data when playing constant waveform */
 	play->effect = NULL;
@@ -2876,14 +2898,14 @@ static int haptics_load_custom_effect(struct haptics_chip *chip,
 
 	dev_dbg(chip->dev, "custom data length %d with play-rate %d Hz\n",
 			custom_data.length, custom_data.play_rate_hz);
+	mutex_lock(&chip->play.lock);
 	rc = haptics_convert_sample_period(chip, custom_data.play_rate_hz);
 	if (rc < 0) {
 		dev_err(chip->dev, "Can't support play rate: %d Hz\n",
 				custom_data.play_rate_hz);
-		return rc;
+		goto unlock;
 	}
 
-	mutex_lock(&chip->play.lock);
 	fifo->period_per_s = rc;
 	/*
 	 * Before allocating samples buffer, free the old sample
@@ -3529,6 +3551,9 @@ static int haptics_config_openloop_lra_period(struct haptics_chip *chip,
 	rc = haptics_adjust_lra_period(chip, &t_lra_us);
 	if (rc < 0)
 		return rc;
+
+	if (t_lra_us < TLRA_STEP_US || t_lra_us > TLRA_MAX_US)
+		return -ERANGE;
 
 	tmp = t_lra_us / TLRA_STEP_US;
 	val[0] = (tmp >> 8) & TLRA_OL_MSB_MASK;
@@ -4633,8 +4658,8 @@ static int haptics_parse_lra_dt(struct haptics_chip *chip)
 		return rc;
 	}
 
-	if (config->t_lra_us > TLRA_MAX_US) {
-		dev_err(chip->dev, "qcom,lra-period-us (%d) exceed the max value: %d\n",
+	if (config->t_lra_us < TLRA_STEP_US || config->t_lra_us > TLRA_MAX_US) {
+		dev_err(chip->dev, "qcom,lra-period-us (%d) outside the supported range 5..%d\n",
 				config->t_lra_us, TLRA_MAX_US);
 		return -EINVAL;
 	}
@@ -4949,7 +4974,7 @@ free_pbs:
 	return rc;
 }
 
-static int swr_slave_reg_enable(struct regulator_dev *rdev)
+static int __swr_slave_reg_enable(struct regulator_dev *rdev)
 {
 	struct haptics_chip *chip = rdev_get_drvdata(rdev);
 	int rc;
@@ -5003,6 +5028,21 @@ done:
 	return 0;
 auto_suspend:
 	haptics_runtime_autosuspend_put(chip);
+	return rc;
+}
+
+/* SoundWire starts do not take play.lock, so share the nonblocking gate. */
+static int swr_slave_reg_enable(struct regulator_dev *rdev)
+{
+	struct haptics_chip *chip = rdev_get_drvdata(rdev);
+	int rc;
+
+	if (!chip->xiaomi_haptics)
+		return __swr_slave_reg_enable(rdev);
+	if (atomic_cmpxchg(&chip->mi_control_busy, 0, 1))
+		return -EBUSY;
+	rc = __swr_slave_reg_enable(rdev);
+	atomic_set_release(&chip->mi_control_busy, 0);
 	return rc;
 }
 
@@ -6062,11 +6102,15 @@ static ssize_t lra_frequency_hz_show(const struct class *c,
 			struct haptics_chip, hap_class);
 	u32 cl_f_lra;
 
-	if (chip->config.cl_t_lra_us == 0)
+	mutex_lock(&chip->play.lock);
+	if (!chip->config.cl_t_lra_us) {
+		mutex_unlock(&chip->play.lock);
 		return -EINVAL;
-
-	cl_f_lra = USEC_PER_SEC / chip->config.cl_t_lra_us;
-	return scnprintf(buf, PAGE_SIZE, "%d Hz\n", cl_f_lra);
+	}
+	cl_f_lra = (chip->xiaomi_haptics ? USEC_PER_SEC * 10 : USEC_PER_SEC) /
+		chip->config.cl_t_lra_us;
+	mutex_unlock(&chip->play.lock);
+	return sysfs_emit(buf, "%u Hz\n", cl_f_lra);
 }
 static CLASS_ATTR_RO(lra_frequency_hz);
 
@@ -6077,8 +6121,8 @@ static ssize_t lra_impedance_show(const struct class *c,
 			struct haptics_chip, hap_class);
 
 	if (chip->config.measure_lra_impedance)
-		return scnprintf(buf, PAGE_SIZE, "measured %u mohms\n",
-				chip->config.lra_measured_mohms);
+		return sysfs_emit(buf, chip->xiaomi_haptics ? "%u mohms\n" :
+				"measured %u mohms\n", chip->config.lra_measured_mohms);
 
 	if (chip->config.lra_min_mohms == 0 && chip->config.lra_max_mohms == 0)
 		return -EINVAL;
@@ -6140,6 +6184,193 @@ static ssize_t visense_enabled_show(const struct class *c,
 }
 static CLASS_ATTR_RO(visense_enabled);
 
+/* MiCode Annibale HAL ABI: frequency is in tenths of a Hz, voltage in mV. */
+static int haptics_xiaomi_f0_to_period(u32 f0, u32 *period)
+{
+	u32 value;
+
+	if (!f0)
+		return -EINVAL;
+	value = (USEC_PER_SEC * 10) / f0;
+	if (value < TLRA_STEP_US || value > TLRA_MAX_US)
+		return -ERANGE;
+	*period = value;
+	return 0;
+}
+
+static int haptics_xiaomi_set_f0(struct haptics_chip *chip, u32 f0)
+{
+	u32 period;
+	u8 val;
+	int rc;
+
+	rc = haptics_xiaomi_f0_to_period(f0, &period);
+	if (rc)
+		return rc;
+	if (chip->config.is_erm)
+		return -EOPNOTSUPP;
+	rc = haptics_runtime_resume_get(chip);
+	if (rc < 0)
+		return rc;
+
+	mutex_lock(&chip->play.lock);
+	if (atomic_cmpxchg(&chip->mi_control_busy, 0, 1)) {
+		rc = -EBUSY;
+		goto unlock;
+	}
+	if (chip->play.in_calibration ||
+	    atomic_read(&chip->play.fifo_status.is_busy) ||
+	    READ_ONCE(chip->swr_slave_enabled)) {
+		rc = -EBUSY;
+		goto release;
+	}
+	rc = haptics_read(chip, chip->cfg_addr_base,
+			HAP_CFG_SPMI_PLAY_REG, &val, 1);
+	if (rc < 0)
+		goto release;
+	if (val & PLAY_EN_BIT) {
+		rc = -EBUSY;
+		goto release;
+	}
+
+	rc = haptics_config_openloop_lra_period(chip, period);
+	if (!rc) {
+		/* Never publish a new period after a failed register write. */
+		chip->config.cl_t_lra_us = period;
+		chip->config.t_lra_us = period;
+		if (chip->custom_effect)
+			chip->custom_effect->t_lra_us = period;
+	}
+release:
+	atomic_set_release(&chip->mi_control_busy, 0);
+unlock:
+	mutex_unlock(&chip->play.lock);
+	haptics_runtime_autosuspend_put(chip);
+	return rc;
+}
+
+static ssize_t mi_f0_ctrl_store(const struct class *c,
+		const struct class_attribute *attr, const char *buf, size_t count)
+{
+	struct haptics_chip *chip = container_of(c, struct haptics_chip, hap_class);
+	u32 f0;
+	int rc;
+
+	rc = kstrtou32(buf, 0, &f0);
+	if (rc)
+		return rc;
+	rc = haptics_xiaomi_set_f0(chip, f0);
+	return rc < 0 ? rc : count;
+}
+
+static ssize_t mi_f0_ctrl_show(const struct class *c,
+		const struct class_attribute *attr, char *buf)
+{
+	return lra_frequency_hz_show(c, attr, buf);
+}
+static CLASS_ATTR_RW(mi_f0_ctrl);
+
+static int haptics_xiaomi_set_vmax(struct haptics_chip *chip, u32 vmax,
+		bool custom)
+{
+	int rc = 0;
+
+	if (vmax > chip->max_vmax_mv)
+		return -ERANGE;
+	mutex_lock(&chip->play.lock);
+	if (custom) {
+		if (!chip->custom_effect) {
+			rc = -ENODEV;
+			goto unlock;
+		}
+		chip->custom_effect->vmax_mv = vmax;
+		chip->config.fifo_vmax_mv = vmax;
+	} else {
+		chip->config.vmax_mv = vmax;
+	}
+unlock:
+	mutex_unlock(&chip->play.lock);
+	return rc;
+}
+
+static ssize_t mi_vmax_ctrl_store(const struct class *c,
+		const struct class_attribute *attr, const char *buf, size_t count)
+{
+	struct haptics_chip *chip = container_of(c, struct haptics_chip, hap_class);
+	u32 vmax;
+	int rc;
+
+	rc = kstrtou32(buf, 0, &vmax);
+	if (rc)
+		return rc;
+	rc = haptics_xiaomi_set_vmax(chip, vmax, false);
+	return rc < 0 ? rc : count;
+}
+
+static ssize_t mi_vmax_ctrl_show(const struct class *c,
+		const struct class_attribute *attr, char *buf)
+{
+	struct haptics_chip *chip = container_of(c, struct haptics_chip, hap_class);
+	u32 vmax;
+
+	mutex_lock(&chip->play.lock);
+	vmax = chip->config.vmax_mv;
+	mutex_unlock(&chip->play.lock);
+	return sysfs_emit(buf, "vmax: %u\n", vmax);
+}
+static CLASS_ATTR_RW(mi_vmax_ctrl);
+
+static ssize_t mi_custom_vmax_ctrl_store(const struct class *c,
+		const struct class_attribute *attr, const char *buf, size_t count)
+{
+	struct haptics_chip *chip = container_of(c, struct haptics_chip, hap_class);
+	u32 vmax;
+	int rc;
+
+	rc = kstrtou32(buf, 0, &vmax);
+	if (rc)
+		return rc;
+	rc = haptics_xiaomi_set_vmax(chip, vmax, true);
+	return rc < 0 ? rc : count;
+}
+
+static ssize_t mi_custom_vmax_ctrl_show(const struct class *c,
+		const struct class_attribute *attr, char *buf)
+{
+	struct haptics_chip *chip = container_of(c, struct haptics_chip, hap_class);
+	u32 vmax;
+
+	mutex_lock(&chip->play.lock);
+	if (!chip->custom_effect) {
+		mutex_unlock(&chip->play.lock);
+		return -ENODEV;
+	}
+	vmax = chip->custom_effect->vmax_mv;
+	mutex_unlock(&chip->play.lock);
+	return sysfs_emit(buf, "custom vmax: %u\n", vmax);
+}
+static CLASS_ATTR_RW(mi_custom_vmax_ctrl);
+
+static ssize_t lra_calibration_check_show(const struct class *c,
+		const struct class_attribute *attr, char *buf)
+{
+	struct haptics_chip *chip = container_of(c, struct haptics_chip, hap_class);
+	u8 val[2];
+	int rc;
+
+	rc = haptics_runtime_resume_get(chip);
+	if (rc < 0)
+		return rc;
+	mutex_lock(&chip->play.lock);
+	rc = haptics_get_status_data(chip, CAL_TLRA_CL_STS, val);
+	mutex_unlock(&chip->play.lock);
+	haptics_runtime_autosuspend_put(chip);
+	if (rc < 0)
+		return rc;
+	return sysfs_emit(buf, "%u\n", !!(val[0] & AUTO_RES_CAL_DONE_BIT));
+}
+static CLASS_ATTR_RO(lra_calibration_check);
+
 static ssize_t v_gain_error_show(const struct class *c,
 		const struct class_attribute *attr, char *buf)
 {
@@ -6183,6 +6414,24 @@ static struct attribute *hap_class_attrs[] = {
 	NULL,
 };
 ATTRIBUTE_GROUPS(hap_class);
+
+static struct attribute *xiaomi_hap_attrs[] = {
+	&class_attr_mi_f0_ctrl.attr,
+	&class_attr_mi_vmax_ctrl.attr,
+	&class_attr_mi_custom_vmax_ctrl.attr,
+	&class_attr_lra_calibration_check.attr,
+	NULL,
+};
+
+static const struct attribute_group xiaomi_hap_group = {
+	.attrs = xiaomi_hap_attrs,
+};
+
+static const struct attribute_group *xiaomi_hap_groups[] = {
+	&hap_class_group,
+	&xiaomi_hap_group,
+	NULL,
+};
 
 static bool is_swr_supported(struct haptics_chip *chip)
 {
@@ -6314,6 +6563,9 @@ static int haptics_probe(struct platform_device *pdev)
 		return -ENXIO;
 	}
 
+	chip->xiaomi_haptics = IS_ENABLED(CONFIG_INPUT_QCOM_HV_HAPTICS_XIAOMI) &&
+		of_device_is_compatible(chip->dev->of_node, "xiaomi,annibale-haptics");
+	atomic_set(&chip->mi_control_busy, 0);
 	INIT_LIST_HEAD(&chip->mmap_effect_list);
 	rc = haptics_parse_dt(chip);
 	if (rc < 0) {
@@ -6406,18 +6658,19 @@ static int haptics_probe(struct platform_device *pdev)
 	}
 
 	chip->hap_class.name = "qcom-haptics";
-	chip->hap_class.class_groups = hap_class_groups;
+	chip->hap_class.class_groups = chip->xiaomi_haptics ?
+		xiaomi_hap_groups : hap_class_groups;
 	rc = class_register(&chip->hap_class);
 	if (rc < 0) {
 		dev_err(chip->dev, "register hap_class failed, rc=%d\n", rc);
-		goto destroy_ff;
+		goto unregister_input;
 	}
 
 	if (chip->hw_type >= HAP530_HV && chip->visense_enabled) {
 		rc = class_create_file(&chip->hap_class, &class_attr_i_gain_error);
 		if (rc) {
 			dev_err(chip->dev, "failed to add i_gain_error, rc=%d\n", rc);
-			goto destroy_ff;
+			goto unregister_class;
 		}
 
 		rc = class_create_file(&chip->hap_class, &class_attr_v_gain_error);
@@ -6428,7 +6681,7 @@ static int haptics_probe(struct platform_device *pdev)
 	}
 
 	chip->hboost_nb.notifier_call = haptics_boost_notifier;
-	register_hboost_event_notifier(&chip->hboost_nb);
+	chip->hboost_registered = !register_hboost_event_notifier(&chip->hboost_nb);
 
 	if (chip->hw_type == HAP530_HV) {
 		chip->lpass_ssr_nb.notifier_call = haptics_lpass_ssr_notifier;
@@ -6437,10 +6690,12 @@ static int haptics_probe(struct platform_device *pdev)
 		if (IS_ERR(chip->lpass_ssr_handle)) {
 			rc = PTR_ERR(chip->lpass_ssr_handle);
 			dev_err(chip->dev, "register SSR notifier failed, rc=%d\n", rc);
+			if (chip->hboost_registered)
+				unregister_hboost_event_notifier(&chip->hboost_nb);
 			if (chip->visense_enabled)
 				goto remove_v_gain_error;
 			else
-				goto destroy_ff;
+				goto unregister_class;
 		}
 	}
 
@@ -6455,6 +6710,11 @@ remove_v_gain_error:
 	class_remove_file(&chip->hap_class, &class_attr_v_gain_error);
 remove_i_gain_error:
 	class_remove_file(&chip->hap_class, &class_attr_i_gain_error);
+unregister_class:
+	class_unregister(&chip->hap_class);
+unregister_input:
+	input_unregister_device(chip->input_dev);
+	return rc;
 destroy_ff:
 	input_ff_destroy(chip->input_dev);
 	return rc;
@@ -6471,7 +6731,8 @@ static int haptics_remove(struct platform_device *pdev)
 	if (chip->hw_type == HAP530_HV)
 		qcom_unregister_ssr_notifier(chip->lpass_ssr_handle, &chip->lpass_ssr_nb);
 
-	unregister_hboost_event_notifier(&chip->hboost_nb);
+	if (chip->hboost_registered)
+		unregister_hboost_event_notifier(&chip->hboost_nb);
 	class_unregister(&chip->hap_class);
 	haptics_remove_debugfs(chip);
 	input_unregister_device(chip->input_dev);
@@ -6675,6 +6936,7 @@ static const struct dev_pm_ops __maybe_unused haptics_pm_ops = {
 };
 
 static const struct of_device_id haptics_match_table[] = {
+	{ .compatible = "xiaomi,annibale-haptics" },
 	{
 		.compatible = "qcom,hv-haptics",
 	},
@@ -6686,6 +6948,8 @@ static const struct of_device_id haptics_match_table[] = {
 	},
 	{},
 };
+
+MODULE_DEVICE_TABLE(of, haptics_match_table);
 
 static struct platform_driver haptics_driver = {
 	.driver		= {

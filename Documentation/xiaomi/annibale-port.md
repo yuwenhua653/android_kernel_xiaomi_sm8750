@@ -69,8 +69,8 @@ Xiaomi device drivers or the complete set of vendor modules are present.
 ## Configuration and reproducible compile check
 
 Apply `arch/arm64/configs/vendor/annibale_board.config` after `gki_defconfig` and
-`arch/arm64/configs/vendor/sun_perf.config`. The fragment selects the three board
-modules/options above; AW21024 stays disabled. A full Android kernel build must
+`arch/arm64/configs/vendor/sun_perf.config`. The fragment selects the board modules/options above and the Annibale haptics
+controls described in [annibale-haptics.md](annibale-haptics.md); AW21024 stays disabled. A full Android kernel build must
 explicitly include this fragment and the matching annibale DT/module packaging.
 Adding this file alone does not change the default sun build.
 

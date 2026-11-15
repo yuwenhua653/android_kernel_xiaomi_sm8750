@@ -228,6 +228,16 @@ config INPUT_QCOM_HV_HAPTICS
 	  for playing different vibration effects. To compile this driver as a module,
 	  choose M here: the module will be called qcom-hv-haptics.
 
+config INPUT_QCOM_HV_HAPTICS_XIAOMI
+	bool "Xiaomi Annibale haptics HAL controls"
+	depends on INPUT_QCOM_HV_HAPTICS
+	help
+	  Enable the MiCode frequency and voltage sysfs ABI only on devices
+	  declaring xiaomi,annibale-haptics. This does not supply Xiaomi
+	  waveform tables or change the Qualcomm calibration algorithm.
+	  The controls are added under the existing qcom-haptics sysfs class.
+	  Say N unless using the matching Annibale device tree and HAL.
+
 config INPUT_SPARCSPKR
 	tristate "SPARC Speaker support"
 	depends on PCI && SPARC64

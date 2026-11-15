@@ -42,13 +42,15 @@ if [[ "$PHASE" != objects ]]; then
 	"${KMAKE[@]}" olddefconfig modules_prepare 2>&1 | tee "$OUT_DIR/prepare.log"
 fi
 for option in CONFIG_MI_T1_CHIP=m CONFIG_IR_SPI_XIAOMI=m \
-	CONFIG_INPUT_PM8941_PWRKEY=m CONFIG_INPUT_PM8941_PWRKEY_XIAOMI=y; do
+	CONFIG_INPUT_PM8941_PWRKEY=m CONFIG_INPUT_PM8941_PWRKEY_XIAOMI=y \
+	CONFIG_INPUT_QCOM_HV_HAPTICS=m CONFIG_INPUT_QCOM_HV_HAPTICS_XIAOMI=y; do
 	grep -qx "$option" "$OUT_DIR/.config" || { printf 'Missing config: %s\n' "$option" >&2; exit 1; }
 done
 if [[ "$PHASE" != prepare ]]; then
 	"${KMAKE[@]}" drivers/gpio/gpio-mi-t1.o \
 		drivers/media/rc/xiaomi/ir-spi.o \
-		drivers/input/misc/pm8941-pwrkey.o 2>&1 | tee "$OUT_DIR/board-objects.log"
+		drivers/input/misc/pm8941-pwrkey.o \
+		drivers/input/misc/qcom-hv-haptics.o 2>&1 | tee "$OUT_DIR/board-objects.log"
 	# Optional source check only: leave the saved annibale .config unchanged.
 	"${KMAKE[@]}" CONFIG_LEDS_AW21024=m drivers/leds/leds-aw21024.o \
 		2>&1 | tee "$OUT_DIR/optional-led-object.log"

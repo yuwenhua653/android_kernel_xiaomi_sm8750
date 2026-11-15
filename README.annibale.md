@@ -67,6 +67,14 @@ git clone -b annibale https://github.com/yuwenhua653/android_kernel_xiaomi_sm875
 触摸必须明确选择其独立 Kconfig/Kbuild，并使用 Annibale 的固件及配置；
 不附带其他机型的固件、THP 参数或归一化校准文件。
 
+## 第二批：振动 HAL 控制接口
+
+在 LOS 高通振动驱动上接入小米频率、普通强度、自定义波形强度控制及
+硬件校准完成位查询；只有 Annibale 配置和专属 DT 标识同时启用时生效。
+保留现有 LOS 校准算法，补充输入边界、播放冲突和寄存器错误处理。
+详细 ABI、源码来源、测试及未完成项见
+[annibale-haptics.md](Documentation/xiaomi/annibale-haptics.md)。
+
 ## 尚待完成
 
 - 补齐/核对 HWID、MCA 充电及指纹等缺失源码和依赖；DT 中有对应节点不代表驱动已可用。
