@@ -1,3 +1,5 @@
+Current firmware target and required checks for both ROM paths: [R11](annibale-rom-paths.md).
+
 # R8: complete kernel and module link qualification
 
 For current build prerequisites, including required pahole/libelf, see
