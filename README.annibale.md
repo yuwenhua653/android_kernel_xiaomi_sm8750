@@ -1,5 +1,9 @@
 # Redmi K90 / annibale OSS kernel
 
+R10 正在修复澎湃原厂模块 ABI：补齐 BTF/pahole 构建要求，新增逐模块兼容审计。
+目前尚未确认兼容你手机上的澎湃版本，不能直接作为原厂内核替换包。
+详见 [澎湃适配记录](Documentation/xiaomi/annibale-hyperos.md)。
+
 本项目以 LineageOS 的 Qualcomm SM8750 三仓库源码为基线，逐步移植
 MiCode `annibale-w-oss` 的 Redmi K90 设备支持。
 

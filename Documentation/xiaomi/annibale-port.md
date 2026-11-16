@@ -1,5 +1,8 @@
 # Annibale board driver import
 
+Latest: [R10 HyperOS ABI work](annibale-hyperos.md) restores required BTF build
+support. R8/R9 link counts below are historical and do not prove stock ABI.
+
 Latest: [R9 battery measurement bridge](annibale-battery.md) adds standard
 read-only reporting; full charging policy remains incomplete.
 

@@ -12,6 +12,11 @@ CLANG_BIN=$(realpath "$CLANG_BIN")
 HOST_TOOLS_BIN=$(realpath "$HOST_TOOLS_BIN")
 BISON_PKGDATADIR=$(realpath "$BISON_PKGDATADIR")
 export PATH="$CLANG_BIN:$HOST_TOOLS_BIN:$PATH"
+# Without pahole, olddefconfig silently drops BTF and changes module_layout.
+if [[ -n "${KERNEL_TOOLS_BIN:-}" ]]; then
+	KERNEL_TOOLS_BIN=$(realpath "$KERNEL_TOOLS_BIN")
+	export PATH="$KERNEL_TOOLS_BIN:$PATH"
+fi
 export M4="$HOST_TOOLS_BIN/m4"
 export BISON_PKGDATADIR
 OUT_DIR=$(realpath -m "$OUT_DIR")
@@ -38,12 +43,21 @@ if [[ "$PHASE" == full || "$PHASE" == qualify ]]; then
 	done
 	command -v cpio >/dev/null || { printf 'Missing host tool: cpio\n' >&2; exit 1; }
 fi
-for tool in clang ld.lld llvm-ar bc gcc bison "$M4"; do
+for tool in clang ld.lld llvm-ar bc gcc bison pahole "$M4"; do
 	command -v "$tool" >/dev/null || { printf 'Missing host tool: %s\n' "$tool" >&2; exit 1; }
 done
 mkdir -p "$OUT_DIR"
 cd "$KERNEL_SRC"
 KMAKE=(make O="$OUT_DIR" ARCH=arm64 LLVM=1 HOSTCC=gcc "-j$JOBS")
+if [[ -n "${KERNEL_TOOLS_BIN:-}" ]]; then
+	KERNEL_TOOLS_ROOT=$(dirname "$KERNEL_TOOLS_BIN")
+	[[ -f "$KERNEL_TOOLS_ROOT/include/libelf.h" && -f "$KERNEL_TOOLS_ROOT/lib64/libelf.so" ]] || {
+		printf 'Missing libelf headers/library beside KERNEL_TOOLS_BIN\n' >&2
+		exit 1
+	}
+	KMAKE+=("HOSTCFLAGS=${HOSTCFLAGS:-} -I$KERNEL_TOOLS_ROOT/include"
+		"HOSTLDFLAGS=${HOSTLDFLAGS:-} -L$KERNEL_TOOLS_ROOT/lib64 -Wl,-rpath,$KERNEL_TOOLS_ROOT/lib64")
+fi
 if [[ "$PHASE" != objects ]]; then
 	"${KMAKE[@]}" gki_defconfig 2>&1 | tee "$OUT_DIR/configure.log"
 	KCONFIG_CONFIG="$OUT_DIR/.config" scripts/kconfig/merge_config.sh -m \
@@ -60,7 +74,8 @@ if [[ "$PHASE" != objects ]]; then
 	fi
 	"${KMAKE[@]}" olddefconfig modules_prepare 2>&1 | tee "$OUT_DIR/prepare.log"
 fi
-for option in CONFIG_MI_T1_CHIP=m CONFIG_IR_SPI_XIAOMI=m \
+for option in CONFIG_DEBUG_INFO_BTF=y CONFIG_DEBUG_INFO_BTF_MODULES=y \
+	CONFIG_MI_T1_CHIP=m CONFIG_IR_SPI_XIAOMI=m \
 	CONFIG_INPUT_PM8941_PWRKEY=m CONFIG_INPUT_PM8941_PWRKEY_XIAOMI=y \
 	CONFIG_INPUT_QCOM_HV_HAPTICS=m CONFIG_INPUT_QCOM_HV_HAPTICS_XIAOMI=y \
 	CONFIG_MI_HARDWARE_ID=m CONFIG_MI_WIFI_GPIO=m; do

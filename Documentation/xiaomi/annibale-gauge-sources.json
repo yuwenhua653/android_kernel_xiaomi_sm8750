@@ -127,8 +127,8 @@
     },
     {
       "path": "scripts/xiaomi/compile-annibale-board.sh",
-      "ported_sha256": "cfe3e6528b692d7c92622b736aa21eca4eaddcd6dea7537b5341d11b8afb0cc8",
-      "updated_in": "R9 standard battery reporting"
+      "ported_sha256": "5a746b1bd9459385223ea0d5d12045f81026abcb42941941cbbfc540def503b9",
+      "updated_in": "R10 retain BTF and module ABI"
     },
     {
       "path": "scripts/xiaomi/tests/test_annibale_gauge.py",

@@ -1,5 +1,8 @@
 # R8: complete kernel and module link qualification
 
+For current build prerequisites, including required pahole/libelf, see
+[R10 HyperOS ABI work](annibale-hyperos.md).
+
 These are historical R8 results. See [R9 battery reporting](annibale-battery.md)
 for the subsequent bridge and its separate build record.
 
