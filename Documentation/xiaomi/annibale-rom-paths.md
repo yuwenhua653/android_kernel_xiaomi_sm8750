@@ -1,3 +1,5 @@
+Latest: R14 fixes DWC3 PHY soft dependencies. The paired modules repository documents IPA corrections and the 83-module network partition candidate in `Documentation/xiaomi/annibale-load-integration.md`. This remains a source qualification build, not a deployable native or HyperOS image.
+
 Latest: [R13 network module integration](https://github.com/yuwenhua653/android_kernel_xiaomi_sm8750-modules/blob/annibale/Documentation/xiaomi/annibale-network.md) validates 411 kernel + 88 external modules and their hard dependency graph.
 
 Latest: [R12 platform module integration](https://github.com/yuwenhua653/android_kernel_xiaomi_sm8750-modules/blob/annibale/Documentation/xiaomi/annibale-platform.md) expands the source check to 411 kernel + 74 external modules. This R11 record remains the exact firmware baseline.

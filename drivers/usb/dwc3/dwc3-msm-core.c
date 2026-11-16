@@ -7744,7 +7744,28 @@ static struct platform_driver dwc3_msm_driver = {
 
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("DesignWare USB3 MSM Glue Layer");
-MODULE_SOFTDEP("pre: phy-generic phy-msm-snps-hs phy-msm-ssusb-qmp eud");
+/* Match the configured PHY providers, including SUN's M31 eUSB2 PHY. */
+#if IS_ENABLED(CONFIG_NOP_USB_XCEIV)
+MODULE_SOFTDEP("pre: phy-generic");
+#endif
+#if IS_ENABLED(CONFIG_MSM_HSUSB_PHY)
+MODULE_SOFTDEP("pre: phy-msm-snps-hs");
+#endif
+#if IS_ENABLED(CONFIG_MSM_QUSB_PHY)
+MODULE_SOFTDEP("pre: phy-msm-qusb");
+#endif
+#if IS_ENABLED(CONFIG_USB_MSM_EUSB2_PHY)
+MODULE_SOFTDEP("pre: phy-msm-snps-eusb2");
+#endif
+#if IS_ENABLED(CONFIG_USB_M31_MSM_EUSB2_PHY)
+MODULE_SOFTDEP("pre: phy-msm-m31-eusb2");
+#endif
+#if IS_ENABLED(CONFIG_USB_MSM_SSPHY_QMP)
+MODULE_SOFTDEP("pre: phy-msm-ssusb-qmp");
+#endif
+#if IS_ENABLED(CONFIG_QCOM_EUD)
+MODULE_SOFTDEP("pre: eud");
+#endif
 
 static int dwc3_msm_init(void)
 {
