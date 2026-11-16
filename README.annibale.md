@@ -1,6 +1,7 @@
 # Redmi K90 / annibale OSS kernel
 
-R10 正在修复澎湃原厂模块 ABI：补齐 BTF/pahole 构建要求，新增逐模块兼容审计。
+R10 已恢复 BTF/pahole 构建支持：411 个内核模块和 58 个外部模块完成验证；
+参考澎湃样本的 623 个不同原厂模块未发现静态 CRC/版本标志/依赖障碍。
 目前尚未确认兼容你手机上的澎湃版本，不能直接作为原厂内核替换包。
 详见 [澎湃适配记录](Documentation/xiaomi/annibale-hyperos.md)。
 
