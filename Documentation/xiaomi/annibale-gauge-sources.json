@@ -107,24 +107,28 @@
     },
     {
       "path": "drivers/power/supply/mca/Kconfig",
-      "ported_sha256": "7bf2eea867bed871fc85e921cc55c44f24ec32a6e6495aff0f203fc310c96525"
+      "ported_sha256": "11033bc5875aa51220919b423187a9443f51e09045aacc5fb46fb1649e26e355",
+      "updated_in": "R9 standard battery reporting"
     },
     {
       "path": "drivers/power/supply/mca/Kbuild",
-      "ported_sha256": "4e898cd7371e1c56bd82c2fdb06ad15a80aeff1b2c6288b108510c5e9450d7bc"
+      "ported_sha256": "c57a093d361d9af121262885374108a204891a7d2c669b437196816987b9c61d",
+      "updated_in": "R9 standard battery reporting"
     },
     {
       "path": "arch/arm64/configs/vendor/annibale_board.config",
-      "ported_sha256": "0b1a5423ca4ce07e5c1f10f395ed5e93ed73b56a3a46d925a7b1b374243c63ec"
+      "ported_sha256": "db6299943f2953526c34ce403f7c1091315d59eea24b3cb8e7680ed5d559f390",
+      "updated_in": "R9 standard battery reporting"
     },
     {
       "path": "arch/arm64/configs/vendor/annibale_mca_test.config",
-      "ported_sha256": "5b45e82a1e3970ac9bb83b090e101597be51a9e74ff2e584531011eeb28eb393"
+      "ported_sha256": "d38ae56e0205ded0b8b41b5f1f5ade2dd85e15c7b6ac97b1d6b08c6788a88665",
+      "updated_in": "R9 standard battery reporting"
     },
     {
       "path": "scripts/xiaomi/compile-annibale-board.sh",
-      "ported_sha256": "e96ad57916c3d0f52c616d1f4f7be199a0d205b9901fc043b67c21603e461efa",
-      "updated_in": "R8 complete kernel/module link qualification"
+      "ported_sha256": "cfe3e6528b692d7c92622b736aa21eca4eaddcd6dea7537b5341d11b8afb0cc8",
+      "updated_in": "R9 standard battery reporting"
     },
     {
       "path": "scripts/xiaomi/tests/test_annibale_gauge.py",

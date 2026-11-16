@@ -3,3 +3,4 @@ subdir-ccflags-y += -I$(srctree)/$(src)/include
 obj-y += mca_common/
 obj-$(CONFIG_XIAOMI_MCA_SERVICES) += mca_platform/
 obj-$(CONFIG_XIAOMI_MCA_BQ27Z561) += mca_bq27z561.o
+obj-$(CONFIG_XIAOMI_MCA_BATTERY) += mca_battery.o

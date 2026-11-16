@@ -1,5 +1,8 @@
 # R8: complete kernel and module link qualification
 
+These are historical R8 results. See [R9 battery reporting](annibale-battery.md)
+for the subsequent bridge and its separate build record.
+
 R8 adds a reproducible complete Make build, followed by a joint external-module
 modpost. This closes the earlier object-only validation gap. It does not provide
 a boot image, working Android battery stack, or a verified hardware release.

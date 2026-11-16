@@ -35,3 +35,14 @@ config XIAOMI_MCA_BQ27Z561
 	  No battery power_supply, polling, firmware writes or charging policy.
 	  Do not load alongside the stock gauge driver. Leave disabled outside
 	  explicit development builds until pack variants are tested on hardware.
+
+config XIAOMI_MCA_BATTERY
+	tristate "Annibale read-only battery reporting (experimental)"
+	depends on XIAOMI_MCA_BQ27Z561 && POWER_SUPPLY
+	depends on QTI_BATTERY_CHARGER=n
+	help
+	  Publish real master-gauge measurements through the standard battery
+	  power_supply interface on mca,business_battery. No charging control,
+	  SOC smoothing, pack authentication or complete health/status policy.
+	  Uses deferrable, freezable polling and does not require a wireless
+	  supply. Leave disabled outside explicit integration test builds.

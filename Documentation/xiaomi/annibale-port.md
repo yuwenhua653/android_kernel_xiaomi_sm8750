@@ -1,5 +1,8 @@
 # Annibale board driver import
 
+Latest: [R9 battery measurement bridge](annibale-battery.md) adds standard
+read-only reporting; full charging policy remains incomplete.
+
 Update: [R8 complete-build qualification](annibale-full-build.md) now covers
 Image, selected in-tree/external module links and same-build CRC/dependency
 checks. The dated object-only results below describe the original import.

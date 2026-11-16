@@ -1,0 +1,224 @@
+{
+  "schema_version": 1,
+  "round": "R9",
+  "device": "Redmi K90 / annibale / SM8750",
+  "scope": "read-only battery bridge, host fault injection and complete same-build kernel/module link checks; no hardware claim",
+  "kernel_parent_commit": "afa4dbcceca1bf7791d424ab3c7f3898a9e16e8e",
+  "modules_commit": "b19f1b87f21dc88fa965259deda3d7c3a1bacd96",
+  "modules_source_dirty": false,
+  "devicetrees_commit": "c6dfe046b7cb97d7e895128ef05b701e1f9a50c9",
+  "implementation": "new limited driver using existing MCA gauge registry; not newly released MiCode charging source",
+  "reviewed_reference": {
+    "repository": "xiaomi-dada/android_kernel_xiaomi_sm8750",
+    "commit": "a7a6375b13e490d187c2b348d961cec39a414ad2",
+    "path": "drivers/power/supply/mca/mca_business/business_battery/mca_battery_psy.c",
+    "git_blob": "5d7466dd4c023a6c333998e9c947d7a344e5ea29",
+    "sha256": "73c2e51ec48960697814b166444d0d6220e25d0d82e3c5fbb5a12a5fc25895ac"
+  },
+  "source_files": {
+    "drivers/power/supply/mca/mca_battery.c": "5e7bc9a017e7860cae435722c0c18cd2189f73512283d0139ea5e0f0d197be77",
+    "drivers/power/supply/mca/Kconfig": "11033bc5875aa51220919b423187a9443f51e09045aacc5fb46fb1649e26e355",
+    "drivers/power/supply/mca/Kbuild": "c57a093d361d9af121262885374108a204891a7d2c669b437196816987b9c61d",
+    "arch/arm64/configs/vendor/annibale_board.config": "db6299943f2953526c34ce403f7c1091315d59eea24b3cb8e7680ed5d559f390",
+    "arch/arm64/configs/vendor/annibale_mca_test.config": "d38ae56e0205ded0b8b41b5f1f5ade2dd85e15c7b6ac97b1d6b08c6788a88665",
+    "scripts/xiaomi/compile-annibale-board.sh": "cfe3e6528b692d7c92622b736aa21eca4eaddcd6dea7537b5341d11b8afb0cc8",
+    "scripts/xiaomi/tests/test_annibale_battery.py": "2899ce3d1a0d839fe844ea60e4f6a123b8846a4eb7e3dcaf94b2eb7869e20f1e",
+    "scripts/xiaomi/tests/annibale_battery_fixture.c": "b46b1846293276e8b71a92d502223b54c848dc3fec5526dc0d05b0ccc0ba4dbf"
+  },
+  "qualification": {
+    "release": "6.6.144-4k-gafa4dbcceca1-dirty",
+    "vermagic": "6.6.144-4k-gafa4dbcceca1-dirty SMP preempt mod_unload modversions aarch64",
+    "kernel_modules": 411,
+    "external_modules": 58,
+    "checks": [
+      "complete Image/vmlinux/modules build",
+      "strict joint external modpost",
+      "all ordered modules exist",
+      "ELF64 little-endian AArch64",
+      "same-build imported symbol CRCs match",
+      "vermagic flags match",
+      "declared hard dependencies present"
+    ],
+    "battery_softdep": "pre: mca_bq27z561 (confirmed in linked .modinfo)",
+    "artifacts": {
+      "arch/arm64/boot/Image": {
+        "sha256": "c5ea9512510b61c6b47c70158e865d14334770e0c3e9a01c2a14c25a9403c2e7",
+        "size": 30644736
+      },
+      "vmlinux": {
+        "sha256": "47875abc3a2125afe60288c768b120eef7d018dc6196cf23bbd1f5362983d34c",
+        "size": 173467864
+      },
+      "Module.symvers": {
+        "sha256": "89d4da09d6843044440eee737328096f6186a16bded00ac74db3b3ed62099257",
+        "size": 1227542
+      },
+      ".config": {
+        "sha256": "d6dd172478c64c789a0b41ea9aaf2defed5da38bd22e6cc971976a3afa37b772",
+        "size": 239427
+      },
+      "modules.order": {
+        "sha256": "0fb8da872eecbf478966acc4e4e76c2cee33c772680111bf3928b74405d89757",
+        "size": 13468
+      }
+    },
+    "external_symvers_sha256": "c7a41695ca2f0ce67d5149038e9ba2e0b8b5f9a68f309c8110ff3eca553dd09d",
+    "external_verification_sha256": "2de1c2e6e388d3669d2429d35f7d442f965217adb6a15c6a03180432d0f83445",
+    "selected_modules": {
+      "mca_battery": {
+        "sha256": "1a4604870dc277fc570c3d8657ae41b59021f05035bf1c90e5c0ea93900c44b4",
+        "versioned_imports": 32,
+        "depends": [
+          "hwid",
+          "mca_platform_fg_ic_ops"
+        ]
+      },
+      "mca_bq27z561": {
+        "sha256": "7951712eec1539ba92de8152af7c5eaf0dd99060b0a64fdde1a8691e69f22c96",
+        "versioned_imports": 19,
+        "depends": [
+          "hwid",
+          "mca_platform_fg_ic_ops"
+        ]
+      },
+      "mca_platform_fg_ic_ops": {
+        "sha256": "f8426f5506db071f83332bbc8a24f811ed750edea63549e8bf65722ceea37db8",
+        "versioned_imports": 9,
+        "depends": []
+      },
+      "msm_drm": {
+        "sha256": "951e1b4e7d9a98385c4a6c7fc0f8a8548c2a85674a0d273faee3df80f005c09a",
+        "versioned_imports": 764,
+        "depends": [
+          "qcom_ipc_logging",
+          "drm_display_helper",
+          "hdcp_qseecom_dlkm",
+          "gh_rm_drv",
+          "gh_irq_lend",
+          "gh_mem_notifier",
+          "gh_msgq",
+          "altmode_glink",
+          "dwc3_msm",
+          "fsa4480_i2c",
+          "wcd_usbss_i2c",
+          "msm_ext_display",
+          "sync_fence",
+          "msm_hw_fence",
+          "llcc_qcom",
+          "panel_event_notifier",
+          "smmu_proxy_dlkm",
+          "qcom_scm",
+          "qcom_va_minidump",
+          "pinctrl_msm",
+          "spmi_pmic_arb",
+          "msm_mmrm",
+          "synx_driver",
+          "clk_qcom",
+          "crm_v2",
+          "mem_buf_dev",
+          "qcom_iommu_util",
+          "msm_dma_iommu_mapping"
+        ]
+      },
+      "camera": {
+        "sha256": "1a74d856f5f4b538f703ed5b06d0f6568b75268f936deac81dda98083490b355",
+        "versioned_imports": 407,
+        "depends": [
+          "mem_buf_dev",
+          "crm_v2",
+          "msm_mmrm",
+          "clk_qcom",
+          "qcom_va_minidump",
+          "qcom_rpmh",
+          "smmu_proxy_dlkm",
+          "qcom_scm",
+          "smcinvoke_dlkm",
+          "qcom_iommu_util",
+          "socinfo",
+          "llcc_qcom",
+          "synx_driver",
+          "mdt_loader",
+          "leds_qti_flash"
+        ]
+      },
+      "machine_dlkm": {
+        "sha256": "5179e63aeeb285e74cb02cd6b5b7f28f5868f1ab2c23960e43dd8f506bc01d5c",
+        "versioned_imports": 103,
+        "depends": [
+          "spf_core_dlkm",
+          "audio_prm_dlkm",
+          "wcd_core_dlkm",
+          "socinfo",
+          "snd_event_dlkm",
+          "fsa4480_i2c",
+          "wcd_usbss_i2c",
+          "wcd9378_dlkm",
+          "wcd939x_dlkm",
+          "lpass_cdc_dlkm",
+          "lpass_cdc_rx_macro_dlkm",
+          "wsa883x_dlkm",
+          "wsa884x_dlkm"
+        ]
+      },
+      "goodix_core": {
+        "sha256": "120bbe0dae38a4388c2343e608a2c84327b43a28566a662d0bb65a1ebb134ca6",
+        "versioned_imports": 147,
+        "depends": [
+          "xiaomi_touch"
+        ]
+      }
+    },
+    "config": {
+      "xiaomi_mca_battery": "m",
+      "xiaomi_mca_bq27z561": "m",
+      "qti_battery_charger": "n",
+      "normal_board_battery": "n"
+    },
+    "conflict_check": "olddefconfig with QTI_BATTERY_CHARGER=m drops both XIAOMI_MCA_BATTERY and XIAOMI_MCA_GLINK",
+    "default_full_build": "not repeated in R9; R8 normal-profile results remain historical"
+  },
+  "host_tests": {
+    "suites_passed": 15,
+    "new_suite": "production battery functions and real MCA registry with fault-injected provider/device/workqueue boundaries",
+    "compiler": "host GCC with -Wall -Wextra -Werror, pthread and UBSan",
+    "cases": [
+      "unit conversion and charge/discharge polarity",
+      "SOC endpoints and invalid/overflow measurements",
+      "probe dependency and registration failures",
+      "unchanged failed output and missing individual measurements",
+      "live reads, notification suppression and error/recovery",
+      "provider unregister/re-register",
+      "concurrent read versus suspend/remove",
+      "resume notification and stopped requeue prevention"
+    ],
+    "limits": "host mocks do not emulate Linux workqueue/device/PM scheduling"
+  },
+  "style": "new driver: checkpatch --strict 0 errors, 0 warnings, 0 checks; helper bash syntax valid",
+  "not_validated": [
+    "hardware readings, probe, PM or charging",
+    "complete USB source, fast-charge and charge-control/thermal policy",
+    "pack authentication, health, UI SOC and shutdown policy",
+    "Android Health/HAL integration",
+    "module signature trust and stock binary ABI",
+    "runtime CFI and Android KMI allowlists",
+    "DTBO bootloader selection and boot/module partition assembly"
+  ],
+  "logs": {
+    "kernel-final.log": {
+      "sha256": "72d51426f1fef1e9339983a5bdbdaa305b113f8361c0cd4b2113af4cb3e8d309",
+      "size": 41119
+    },
+    "external.log": {
+      "sha256": "9e074f93b997e9219cd8cedefec857e7bba932e0c904eb33b28fba38354db766",
+      "size": 325
+    },
+    "host-tests.log": {
+      "sha256": "a7e281ce4921e9e60f0062982a5d76b27db081749e8caf6fb8871d24fbe54a64",
+      "size": 3213
+    },
+    "config-conflict.log": {
+      "sha256": "67541ba95959c3c75b970ae357780a81b376d122e1556696caf48a6bcdc0081a",
+      "size": 669
+    }
+  }
+}

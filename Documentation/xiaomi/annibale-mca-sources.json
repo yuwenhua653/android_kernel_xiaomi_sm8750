@@ -62,15 +62,15 @@
   "files": [
     {
       "path": "drivers/power/supply/mca/Kbuild",
-      "ported_sha256": "4e898cd7371e1c56bd82c2fdb06ad15a80aeff1b2c6288b108510c5e9450d7bc",
+      "ported_sha256": "c57a093d361d9af121262885374108a204891a7d2c669b437196816987b9c61d",
       "reference_sha256": "ad7a72f9243db6445eaf8c2ea15fcd7340475586e692bb16263197ea14ce113d",
-      "updated_in": "R7 read-only gauge integration"
+      "updated_in": "R9 standard battery reporting"
     },
     {
       "path": "drivers/power/supply/mca/Kconfig",
-      "ported_sha256": "7bf2eea867bed871fc85e921cc55c44f24ec32a6e6495aff0f203fc310c96525",
+      "ported_sha256": "11033bc5875aa51220919b423187a9443f51e09045aacc5fb46fb1649e26e355",
       "reference_sha256": "820207625e87b83321edd8f7bba8a7a7e47396dc833c1075f3b835d33f5f1e7d",
-      "updated_in": "R7 read-only gauge integration"
+      "updated_in": "R9 standard battery reporting"
     },
     {
       "path": "drivers/power/supply/mca/include/mca/common/mca_adsp_glink.h",
