@@ -1,3 +1,5 @@
+Latest: [R12 platform module integration](https://github.com/yuwenhua653/android_kernel_xiaomi_sm8750-modules/blob/annibale/Documentation/xiaomi/annibale-platform.md) expands the source check to 411 kernel + 74 external modules. This R11 record remains the exact firmware baseline.
+
 # R11: HyperOS 4 and native ROM qualification
 
 The target is the user's **OS4.0.6.0.XPKCNXM**, Redmi K90 / annibale / SM8750.
