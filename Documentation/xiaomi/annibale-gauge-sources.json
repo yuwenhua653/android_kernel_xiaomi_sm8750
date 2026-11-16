@@ -123,7 +123,8 @@
     },
     {
       "path": "scripts/xiaomi/compile-annibale-board.sh",
-      "ported_sha256": "12493f9d880afff9803d187a47feef3154a57f73ca84f2a669fd31b2ca94bc8d"
+      "ported_sha256": "e96ad57916c3d0f52c616d1f4f7be199a0d205b9901fc043b67c21603e461efa",
+      "updated_in": "R8 complete kernel/module link qualification"
     },
     {
       "path": "scripts/xiaomi/tests/test_annibale_gauge.py",

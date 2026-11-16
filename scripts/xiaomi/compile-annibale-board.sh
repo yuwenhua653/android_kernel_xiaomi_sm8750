@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: GPL-2.0-only
-# ARM64 object compilation smoke check, not a boot image or module-link build.
+# ARM64 board checks; full/qualify also link Image and all in-tree modules.
 set -euo pipefail
 
 KERNEL_SRC=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
@@ -15,17 +15,28 @@ export PATH="$CLANG_BIN:$HOST_TOOLS_BIN:$PATH"
 export M4="$HOST_TOOLS_BIN/m4"
 export BISON_PKGDATADIR
 OUT_DIR=$(realpath -m "$OUT_DIR")
+mkdir -p "$OUT_DIR/host-bin"
+export PATH="$OUT_DIR/host-bin:$PATH"
 # AOSP publishes bc under its implementation name; Kbuild invokes "bc".
 if ! command -v bc >/dev/null && [[ -x "$HOST_TOOLS_BIN/gavinhoward-bc" ]]; then
 	mkdir -p "$OUT_DIR/host-bin"
 	ln -sf "$HOST_TOOLS_BIN/gavinhoward-bc" "$OUT_DIR/host-bin/bc"
-	export PATH="$OUT_DIR/host-bin:$PATH"
+fi
+# AOSP toybox supplies cpio for CONFIG_IKHEADERS in a complete kernel build.
+if ! command -v cpio >/dev/null && [[ -x "$HOST_TOOLS_BIN/toybox" ]]; then
+	ln -sf "$HOST_TOOLS_BIN/toybox" "$OUT_DIR/host-bin/cpio"
 fi
 JOBS=${JOBS:-3}
 PHASE=${1:-all}
-if [[ "$PHASE" != all && "$PHASE" != prepare && "$PHASE" != objects && "$PHASE" != fingerprint && "$PHASE" != mca ]]; then
-	printf 'Usage: %s [all|prepare|objects|fingerprint|mca]\n' "$0" >&2
+if [[ "$PHASE" != all && "$PHASE" != prepare && "$PHASE" != objects && "$PHASE" != fingerprint && "$PHASE" != mca && "$PHASE" != full && "$PHASE" != qualify ]]; then
+	printf 'Usage: %s [all|prepare|objects|fingerprint|mca|full|qualify]\n' "$0" >&2
 	exit 2
+fi
+if [[ "$PHASE" == full || "$PHASE" == qualify ]]; then
+	for option in KBUILD_MODPOST_WARN KBUILD_MODPOST_NOFINAL KBUILD_EXTRA_SYMBOLS KBUILD_MIXED_TREE; do
+		[[ -z "${!option:-}" ]] || { printf 'Unset %s for a complete build\n' "$option" >&2; exit 1; }
+	done
+	command -v cpio >/dev/null || { printf 'Missing host tool: cpio\n' >&2; exit 1; }
 fi
 for tool in clang ld.lld llvm-ar bc gcc bison "$M4"; do
 	command -v "$tool" >/dev/null || { printf 'Missing host tool: %s\n' "$tool" >&2; exit 1; }
@@ -39,11 +50,11 @@ if [[ "$PHASE" != objects ]]; then
 		"$OUT_DIR/.config" arch/arm64/configs/vendor/sun_perf.config \
 		arch/arm64/configs/vendor/annibale_board.config \
 		2>&1 | tee "$OUT_DIR/merge-config.log"
-	if [[ "$PHASE" == fingerprint ]]; then
+	if [[ "$PHASE" == fingerprint || "$PHASE" == qualify ]]; then
 		KCONFIG_CONFIG="$OUT_DIR/.config" scripts/kconfig/merge_config.sh -m \
 			"$OUT_DIR/.config" arch/arm64/configs/vendor/annibale_fingerprint_test.config
 	fi
-	if [[ "$PHASE" == mca ]]; then
+	if [[ "$PHASE" == mca || "$PHASE" == qualify ]]; then
 		KCONFIG_CONFIG="$OUT_DIR/.config" scripts/kconfig/merge_config.sh -m \
 			"$OUT_DIR/.config" arch/arm64/configs/vendor/annibale_mca_test.config
 	fi
@@ -62,14 +73,14 @@ if [[ "$PHASE" != prepare ]]; then
 		drivers/input/misc/qcom-hv-haptics.o \
 		drivers/misc/hwid/hwid.o \
 		drivers/misc/wifi_gpio/xiaomi_wifi_gpio.o 2>&1 | tee "$OUT_DIR/board-objects.log"
-	if [[ "$PHASE" == fingerprint ]]; then
+	if [[ "$PHASE" == fingerprint || "$PHASE" == qualify ]]; then
 		grep -qx CONFIG_FINGERPRINT_MI_FP=m "$OUT_DIR/.config"
 		grep -qx CONFIG_ULTRA_FINGERPRINT_P11=y "$OUT_DIR/.config"
 		"${KMAKE[@]}" drivers/input/fingerprint/mi_fp/ \
 			drivers/soc/qcom/panel_event_notifier.o \
 			2>&1 | tee "$OUT_DIR/fingerprint-objects.log"
 	fi
-	if [[ "$PHASE" == mca ]]; then
+	if [[ "$PHASE" == mca || "$PHASE" == qualify ]]; then
 		grep -qx CONFIG_XIAOMI_MCA_CORE=m "$OUT_DIR/.config"
 		grep -qx CONFIG_XIAOMI_MCA_SERVICES=m "$OUT_DIR/.config"
 		grep -qx CONFIG_XIAOMI_MCA_BQ27Z561=m "$OUT_DIR/.config"
@@ -82,4 +93,11 @@ if [[ "$PHASE" != prepare ]]; then
 	# Optional source check only: leave the saved annibale .config unchanged.
 	"${KMAKE[@]}" CONFIG_LEDS_AW21024=m drivers/leds/leds-aw21024.o \
 		2>&1 | tee "$OUT_DIR/optional-led-object.log"
+fi
+if [[ "$PHASE" == full || "$PHASE" == qualify ]]; then
+	"${KMAKE[@]}" Image modules 2>&1 | tee "$OUT_DIR/full-build.log"
+	for artifact in arch/arm64/boot/Image vmlinux Module.symvers modules.order; do
+		[[ -s "$OUT_DIR/$artifact" ]] || { printf 'Missing artifact: %s\n' "$artifact" >&2; exit 1; }
+	done
+	printf 'Linked Image and in-tree modules. Not a flashable boot image.\n'
 fi

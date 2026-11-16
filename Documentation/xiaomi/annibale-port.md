@@ -1,5 +1,9 @@
 # Annibale board driver import
 
+Update: [R8 complete-build qualification](annibale-full-build.md) now covers
+Image, selected in-tree/external module links and same-build CRC/dependency
+checks. The dated object-only results below describe the original import.
+
 This is an initial Redmi K90 (annibale) source port onto the LineageOS SM8750
 kernel. It is not a complete device kernel or a flashable release. The checks
 below establish ARM64 object compilation, not successful module linking,
