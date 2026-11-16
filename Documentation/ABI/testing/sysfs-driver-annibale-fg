@@ -1,0 +1,26 @@
+What:		/sys/bus/i2c/devices/.../telemetry/voltage_mv
+What:		/sys/bus/i2c/devices/.../telemetry/discharge_current_ua
+What:		/sys/bus/i2c/devices/.../telemetry/temperature_decic
+What:		/sys/bus/i2c/devices/.../telemetry/internal_temperature_decic
+What:		/sys/bus/i2c/devices/.../telemetry/soc_percent
+What:		/sys/bus/i2c/devices/.../telemetry/remaining_charge_uah
+What:		/sys/bus/i2c/devices/.../telemetry/full_charge_uah
+What:		/sys/bus/i2c/devices/.../telemetry/design_charge_uah
+What:		/sys/bus/i2c/devices/.../telemetry/cycle_count
+What:		/sys/bus/i2c/devices/.../telemetry/soh_percent
+Date:		November 2026
+Contact:	Annibale kernel maintainers
+Description:
+		Experimental read-only integer telemetry for the Annibale master
+		gauge (ti,bq27z561_master, I2C address 0x55, ic_role 0).
+		Each read performs one SMBus word transaction. Voltage is mV;
+		current is microamps, positive on discharge, negative on charge
+		(the MCA convention). Temperatures are tenths of degrees Celsius.
+		Charge values are microamp-hours; SOC/SOH are integer percentages;
+		cycle_count is an integer count. Internal temperature is the gauge
+		internal sensor, not a second pack sensor. SOC is raw gauge SOC,
+		not smoothed Android UI capacity. Reads are not an atomic snapshot.
+		Bus errors propagate, out-of-range values return ERANGE, suspended
+		reads return EHOSTDOWN and teardown returns ENODEV. No cached or
+		fabricated replacement values are returned. These are diagnostic
+		interfaces, not charging-control or battery-authentication APIs.

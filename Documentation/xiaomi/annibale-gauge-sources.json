@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "scope": "R7 read-only standard-register provider; no hardware or binary module compatibility claim",
+  "parent_kernel_commit": "570aeb6680b523e3cec3c4cad0fe2a97a8ce552b",
+  "implementation": "new limited driver; reference is community reconstruction, not MiCode source",
+  "source": {
+    "repository": "xiaomi-dada/android_kernel_xiaomi_sm8750",
+    "commit": "a7a6375b13e490d187c2b348d961cec39a414ad2",
+    "files": [
+      {
+        "path": "drivers/power/supply/mca/mca_hardware_ic/fuelgauge_ic/bq27z561/bq27z561.c",
+        "sha256": "c0613a01a89a5a1ca8fc8b9f99aa91577dcd5fe91bcab66f76a7a44c1d74e3ec"
+      },
+      {
+        "path": "drivers/power/supply/mca/mca_hardware_ic/fuelgauge_ic/bq27z561/inc/bq27z561.h",
+        "sha256": "5d731119106b6a2e297caa19794268903222f8d070cc6686758e448c01b44e64"
+      }
+    ]
+  },
+  "stock_reference": {
+    "repository": "xiaomi-annibale/android_device_xiaomi_annibale-kernel",
+    "commit": "df318c6b1c81e17d4fdc0fc9333c00c4d90e928a",
+    "path": "modules/vendor_boot/bq27z561.ko",
+    "sha256": "c195e0458a8b228dadd80f0f6c5d6292a5db894fb416ccd66e5b3801f38a804d",
+    "symbol": "bq27z561_regs",
+    "section": ".rodata",
+    "offset": "0x53c8",
+    "verified_standard_prefix_hex": "00 06 08 0c 14 0a 0e 1e 16 18 12 10 2a 2c 2e 30 32 3c 3e 40 60 61",
+    "used_registers": [
+      {
+        "name": "voltage",
+        "table_index": 2,
+        "register": "0x08"
+      },
+      {
+        "name": "current",
+        "table_index": 3,
+        "register": "0x0c"
+      },
+      {
+        "name": "temperature",
+        "table_index": 1,
+        "register": "0x06"
+      },
+      {
+        "name": "internal_temperature",
+        "table_index": 7,
+        "register": "0x1e"
+      },
+      {
+        "name": "rsoc",
+        "table_index": 13,
+        "register": "0x2c"
+      },
+      {
+        "name": "remaining_capacity",
+        "table_index": 11,
+        "register": "0x10"
+      },
+      {
+        "name": "full_capacity",
+        "table_index": 10,
+        "register": "0x12"
+      },
+      {
+        "name": "design_capacity",
+        "table_index": 17,
+        "register": "0x3c"
+      },
+      {
+        "name": "cycle_count",
+        "table_index": 12,
+        "register": "0x2a"
+      },
+      {
+        "name": "soh",
+        "table_index": 14,
+        "register": "0x2e"
+      },
+      {
+        "name": "flags",
+        "table_index": 5,
+        "register": "0x0a"
+      }
+    ],
+    "selected_disassembly_checks": [
+      "fg_read_current: sign inversion and multiplication by 1000",
+      "fg_read_temperature: subtract 0xaaa (2730)",
+      "fg_read_fcc and fg_read_dc: multiplication by 1000",
+      "fg_read_volt: unscaled mV, upper bound 5000"
+    ],
+    "omissions": "no MAC, firmware, pack ID, authentication or hardware validation"
+  },
+  "device_tree": {
+    "repository": "yuwenhua653/android_kernel_xiaomi_sm8750-devicetrees",
+    "commit": "c6dfe046b7cb97d7e895128ef05b701e1f9a50c9",
+    "path": "qcom/annibale-charger-common.dtsi",
+    "blob_sha": "3ecab80410d0733a432675bf6ae3584d9526be85",
+    "compatible": "ti,bq27z561_master",
+    "address": "0x55",
+    "ic_role": 0
+  },
+  "files": [
+    {
+      "path": "drivers/power/supply/mca/mca_bq27z561.c",
+      "ported_sha256": "9b60923b846074e0a2b2864350f58460106e21b134716b182aa428dc8d8cbe6c"
+    },
+    {
+      "path": "drivers/power/supply/mca/Kconfig",
+      "ported_sha256": "7bf2eea867bed871fc85e921cc55c44f24ec32a6e6495aff0f203fc310c96525"
+    },
+    {
+      "path": "drivers/power/supply/mca/Kbuild",
+      "ported_sha256": "4e898cd7371e1c56bd82c2fdb06ad15a80aeff1b2c6288b108510c5e9450d7bc"
+    },
+    {
+      "path": "arch/arm64/configs/vendor/annibale_board.config",
+      "ported_sha256": "0b1a5423ca4ce07e5c1f10f395ed5e93ed73b56a3a46d925a7b1b374243c63ec"
+    },
+    {
+      "path": "arch/arm64/configs/vendor/annibale_mca_test.config",
+      "ported_sha256": "5b45e82a1e3970ac9bb83b090e101597be51a9e74ff2e584531011eeb28eb393"
+    },
+    {
+      "path": "scripts/xiaomi/compile-annibale-board.sh",
+      "ported_sha256": "12493f9d880afff9803d187a47feef3154a57f73ca84f2a669fd31b2ca94bc8d"
+    },
+    {
+      "path": "scripts/xiaomi/tests/test_annibale_gauge.py",
+      "ported_sha256": "b43ae06adbb52747faba24c3db04195e11d8f9ee6bd71058dbf48a61e71d88c8"
+    },
+    {
+      "path": "scripts/xiaomi/tests/annibale_gauge_fixture.c",
+      "ported_sha256": "2edaa352378a647f33388c6db8c446563022421d5b2154069b2db583ebf8a1cd"
+    },
+    {
+      "path": "Documentation/ABI/testing/sysfs-driver-annibale-fg",
+      "ported_sha256": "db58f03bd6ab30027264a539fb593d05d3e1dca721c727d18cb213ea423d665c"
+    }
+  ]
+}

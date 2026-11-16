@@ -67,6 +67,8 @@ for provenance, configuration, loader requirements and outstanding qualification
 R5 adds four default-off MCA common/transport candidates; see
 [annibale-mca.md](annibale-mca.md). R6 adds the
 [charging and fuel-gauge services](annibale-mca-services.md), also default-off.
+R7 adds the [read-only BQ27Z561 I2C provider](annibale-gauge.md), with ten measured
+telemetry values and twelve MCA callbacks; it also remains default-off.
 Charging still needs the remaining MCA
 policy, power-supply and HAL integration. No fabricated hardware identities
 or dummy hardware implementations are supplied.

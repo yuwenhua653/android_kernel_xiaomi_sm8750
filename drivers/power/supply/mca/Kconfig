@@ -25,3 +25,13 @@ config XIAOMI_MCA_SERVICES
 	  control dispatcher and fuel-gauge callback registry. These require
 	  real hardware/policy providers; missing operations return errors.
 	  No battery power-supply driver or charging policy is supplied here.
+
+config XIAOMI_MCA_BQ27Z561
+	tristate "Annibale BQ27Z561 read-only telemetry (experimental)"
+	depends on XIAOMI_MCA_SERVICES && I2C
+	help
+	  Read standard gauge registers on the Annibale master gauge at 0x55.
+	  Publish measured values through MCA and read-only I2C device sysfs.
+	  No battery power_supply, polling, firmware writes or charging policy.
+	  Do not load alongside the stock gauge driver. Leave disabled outside
+	  explicit development builds until pack variants are tested on hardware.

@@ -641,13 +641,15 @@
   "files": [
     {
       "path": "drivers/power/supply/mca/Kbuild",
-      "ported_sha256": "bed6b85db894f69ec1581819d1cf66c0dc0d8cf812d60dacfedf17dc4ac313d3",
-      "reference_sha256": "ad7a72f9243db6445eaf8c2ea15fcd7340475586e692bb16263197ea14ce113d"
+      "ported_sha256": "4e898cd7371e1c56bd82c2fdb06ad15a80aeff1b2c6288b108510c5e9450d7bc",
+      "reference_sha256": "ad7a72f9243db6445eaf8c2ea15fcd7340475586e692bb16263197ea14ce113d",
+      "updated_in": "R7 read-only gauge integration"
     },
     {
       "path": "drivers/power/supply/mca/Kconfig",
-      "ported_sha256": "a68dced159f7b324c1b5ea61b3f161b25af516090032ea37555092898478e62d",
-      "reference_sha256": "820207625e87b83321edd8f7bba8a7a7e47396dc833c1075f3b835d33f5f1e7d"
+      "ported_sha256": "7bf2eea867bed871fc85e921cc55c44f24ec32a6e6495aff0f203fc310c96525",
+      "reference_sha256": "820207625e87b83321edd8f7bba8a7a7e47396dc833c1075f3b835d33f5f1e7d",
+      "updated_in": "R7 read-only gauge integration"
     },
     {
       "path": "drivers/power/supply/mca/include/mca/common/mca_adsp_glink.h",
