@@ -1,0 +1,11 @@
+{
+  "upstream_commit": "759894c87b6e77bb3262bdf703ec474ab323d5ab",
+  "upstream_tag": "android15-6.6-2025-06_r16",
+  "files": {
+    "mm/memfd-ashmem-shim.c": "c40e9d5a3feeea31fc2a21a31591803909c1599a9f18fa18d8b9536e8bfebad0",
+    "mm/memfd-ashmem-shim.h": "493f414cf379fb78167d6ffea191511c6391e57bb2232ffa7b2c14e0a050de66",
+    "mm/memfd-ashmem-shim-internal.h": "83ff01d33eca8ec64a9df8b905da18261f0cc51231f7ebfdd26b3e876a5a2850"
+  },
+  "reason": "Restore the ioctl ABI enabled in the extracted OS4.0.6 stock kernel; separate /dev/ashmem support does not handle ioctls on memfd descriptors. Not a claim this caused a prior boot failure.",
+  "upstream_context": "ACK later removed this shim from older-kernel branches (e.g. aba16327dea522cc30a043a71bb604e5f0e2dc84 says only needed for 6.12+). This is an annibale stock-ABI parity choice, not a general 6.6 requirement."
+}
