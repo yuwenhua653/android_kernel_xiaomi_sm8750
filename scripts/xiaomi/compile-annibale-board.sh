@@ -33,8 +33,18 @@ if ! command -v cpio >/dev/null && [[ -x "$HOST_TOOLS_BIN/toybox" ]]; then
 fi
 JOBS=${JOBS:-3}
 PHASE=${1:-all}
+OSS_COVERAGE=0
+OSS_POWER=0
+if [[ "$PHASE" == oss-power ]]; then
+	OSS_POWER=1
+	PHASE=oss
+fi
+if [[ "$PHASE" == oss ]]; then
+	OSS_COVERAGE=1
+	PHASE=qualify
+fi
 if [[ "$PHASE" != all && "$PHASE" != prepare && "$PHASE" != objects && "$PHASE" != fingerprint && "$PHASE" != mca && "$PHASE" != full && "$PHASE" != qualify ]]; then
-	printf 'Usage: %s [all|prepare|objects|fingerprint|mca|full|qualify]\n' "$0" >&2
+	printf 'Usage: %s [all|prepare|objects|fingerprint|mca|full|qualify|oss|oss-power]\n' "$0" >&2
 	exit 2
 fi
 if [[ "$PHASE" == full || "$PHASE" == qualify ]]; then
@@ -69,10 +79,37 @@ if [[ "$PHASE" != objects ]]; then
 			"$OUT_DIR/.config" arch/arm64/configs/vendor/annibale_fingerprint_test.config
 	fi
 	if [[ "$PHASE" == mca || "$PHASE" == qualify ]]; then
+		if [[ "$OSS_POWER" == 1 ]]; then
+			MCA_FRAGMENT=arch/arm64/configs/vendor/annibale_mca_oss.config
+		else
+			MCA_FRAGMENT=arch/arm64/configs/vendor/annibale_mca_test.config
+		fi
 		KCONFIG_CONFIG="$OUT_DIR/.config" scripts/kconfig/merge_config.sh -m \
-			"$OUT_DIR/.config" arch/arm64/configs/vendor/annibale_mca_test.config
+			"$OUT_DIR/.config" "$MCA_FRAGMENT"
+	fi
+	if [[ "$OSS_COVERAGE" == 1 ]]; then
+		KCONFIG_CONFIG="$OUT_DIR/.config" scripts/kconfig/merge_config.sh -m \
+			"$OUT_DIR/.config" arch/arm64/configs/vendor/annibale_oss_coverage.config
 	fi
 	"${KMAKE[@]}" olddefconfig modules_prepare 2>&1 | tee "$OUT_DIR/prepare.log"
+	if [[ "$OSS_COVERAGE" == 1 ]]; then
+		while IFS= read -r option; do
+			[[ "$option" == CONFIG_*=* ]] || continue
+			grep -qxF "$option" "$OUT_DIR/.config" || {
+				printf 'OSS coverage config was dropped: %s\n' "$option" >&2
+				exit 1
+			}
+		done < arch/arm64/configs/vendor/annibale_oss_coverage.config
+	fi
+	if [[ "$OSS_POWER" == 1 ]]; then
+		while IFS= read -r option; do
+			[[ "$option" == CONFIG_*=* ]] || continue
+			grep -qxF "$option" "$OUT_DIR/.config" || {
+				printf 'MCA candidate config was dropped: %s\n' "$option" >&2
+				exit 1
+			}
+		done < arch/arm64/configs/vendor/annibale_mca_oss.config
+	fi
 fi
 for option in CONFIG_DEBUG_INFO_BTF=y CONFIG_DEBUG_INFO_BTF_MODULES=y \
 	CONFIG_MI_T1_CHIP=m CONFIG_IR_SPI_XIAOMI=m \
@@ -96,6 +133,13 @@ if [[ "$PHASE" != prepare ]]; then
 			2>&1 | tee "$OUT_DIR/fingerprint-objects.log"
 	fi
 	if [[ "$PHASE" == mca || "$PHASE" == qualify ]]; then
+		if [[ "$OSS_POWER" == 1 ]]; then
+			grep -qx CONFIG_XM_POWER_SUPPLY=m "$OUT_DIR/.config"
+			grep -qx '# CONFIG_XIAOMI_MCA_CORE is not set' "$OUT_DIR/.config"
+			grep -qx '# CONFIG_QTI_BATTERY_CHARGER is not set' "$OUT_DIR/.config"
+			"${KMAKE[@]}" drivers/power/supply/mca-oss/ \
+				2>&1 | tee "$OUT_DIR/mca-oss-objects.log"
+		else
 		grep -qx CONFIG_XIAOMI_MCA_CORE=m "$OUT_DIR/.config"
 		grep -qx CONFIG_XIAOMI_MCA_SERVICES=m "$OUT_DIR/.config"
 		grep -qx CONFIG_XIAOMI_MCA_BQ27Z561=m "$OUT_DIR/.config"
@@ -105,6 +149,7 @@ if [[ "$PHASE" != prepare ]]; then
 		"${KMAKE[@]}" drivers/power/supply/mca/ \
 			drivers/soc/qcom/qti_pmic_glink.o \
 			2>&1 | tee "$OUT_DIR/mca-objects.log"
+		fi
 	fi
 	# Optional source check only: leave the saved annibale .config unchanged.
 	"${KMAKE[@]}" CONFIG_LEDS_AW21024=m drivers/leds/leds-aw21024.o \

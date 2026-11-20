@@ -116,3 +116,4 @@ obj-$(CONFIG_SCHGM_FLASH)       += schgm-flash.o
 obj-$(CONFIG_QCOM_POWER_SUPPLY)	+= qcom/
 
 obj-$(CONFIG_XIAOMI_MCA_CORE) += mca/
+obj-$(CONFIG_XM_POWER_SUPPLY) += mca-oss/

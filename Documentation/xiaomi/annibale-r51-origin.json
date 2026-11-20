@@ -1,0 +1,25 @@
+{
+  "repository": "MiCode/Xiaomi_Kernel_OpenSource",
+  "branch": "piano-w-oss",
+  "commit": "45fb9bd6ae5ba2942fc1d53e4b6b46ef76992f71",
+  "scope": "Initial import hashes before Annibale correctness/porting changes; not a runtime qualification",
+  "files": {
+    "drivers/staging/miev/mievent.h": "188b056035bb29063bd07b1dae945969c212402f1bb320c639da25a23b5f22c7",
+    "drivers/staging/miev/OWNERS": "b0f7a96ec999cc31414e821e2f4627e0cf31ae4efac2c278cc2986240c268594",
+    "drivers/staging/miev/common.h": "d8dcd7296da033401d0564f144faa281cc3da139990046fb854ff08eb4d5def7",
+    "drivers/staging/miev/mievent.c": "e46bd732ea48dc90a40bfd082994c2ba9f9b772682efdd4e493b9005ad767da1",
+    "drivers/staging/miev/midevice.h": "5de713c16da2f0d1b92e61d69d0ef55db98074f71b9c9f208d67b649ebe78b41",
+    "drivers/staging/miev/Kconfig": "1985cae916bd4a1f4483e8a765b44308b0c14bb02c9207d6beaae617ee1b29a6",
+    "drivers/staging/miev/Makefile": "1ba533488ecfa0b5d8786a0a7cb8dddd3f74403bf86a4fa7df1ab94798b26762",
+    "drivers/staging/miev/midevice.c": "0472d391a97cd5378a21a2b2a6f94233c47da8f3533d7cdc3ff3dfe66a913f3e",
+    "include/miev/mievent.h": "c86bda3f09d0329b069aa7428fedb652992aea2bfccfc903044d42c145eba276",
+    "drivers/staging/mi_rmap_efficiency/Kconfig": "0be6e2f56be3006a170ec114a5562cd93f213633458db5cf0824ef3dee375751",
+    "drivers/staging/mi_rmap_efficiency/Makefile": "9c9f601906387726ab19e7b2d3318ce484d289b3084809ba5520f4ac3e4c18bd",
+    "drivers/staging/mi_rmap_efficiency/mi_rmap_efficiency.c": "3ee6cbde0689fde8500c832e3178b579461893a09205dbbe033c6df735920ae9",
+    "drivers/xiaomi/kshrink_slabd/kshrink_slabd.c": "7f4ab9189fefa81123b6a4eb2ad61a57001349f2cc7dacd1075455b5104b6cab",
+    "drivers/xiaomi/kshrink_slabd/Kconfig": "bb88b84530ee5d8a4629c29064442da9dad3b7522d113d5c43311804be89138e",
+    "drivers/xiaomi/kshrink_slabd/Makefile": "24ec46ac078e64d0323127418c7973298549115f64d80491220fae4c1e0c0801",
+    "drivers/misc/ntsync.c": "d33839c9aef326554f71e2a350e3d93a5162b71febd004052f5ceac12ab92779",
+    "include/uapi/linux/ntsync.h": "006437ee52a3e04f921df77081eb5c21c44c71f598b10ac534c6ef9e78296262"
+  }
+}

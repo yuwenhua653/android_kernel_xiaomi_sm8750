@@ -31,18 +31,22 @@ typedef uint32_t __le32;
 
 class MCATests(unittest.TestCase):
     def test_protocol_and_request_failures(self):
-        source = (MCA / 'mca_common/mca_adsp_glink.c').read_text()
-        protocol = (MCA / 'mca_common/mca_glink_protocol.h').read_text()
         fixture = Path(__file__).with_name('annibale_mca_glink_fixture.c').read_text()
-        run(PRELUDE + protocol + fixture.replace('/* PRODUCTION */',
-                                                function(source, 'mca_transfer')))
+        for root in (MCA, MCA.with_name('mca-oss')):
+            with self.subTest(implementation=root.name):
+                source = (root / 'mca_common/mca_adsp_glink.c').read_text()
+                protocol = (root / 'mca_common/mca_glink_protocol.h').read_text()
+                run(PRELUDE + protocol + fixture.replace('/* PRODUCTION */',
+                                                        function(source, 'mca_transfer')))
 
     def test_restart_event_ordering(self):
-        source = (MCA / 'mca_common/mca_adsp_glink.c').read_text()
-        functions = '\n'.join(function(source, name) for name in
-                              ['mca_state_work', 'mca_queue_state', 'mca_state'])
         fixture = Path(__file__).with_name('annibale_mca_state_fixture.c').read_text()
-        run(PRELUDE + fixture.replace('/* PRODUCTION */', functions))
+        for root in (MCA, MCA.with_name('mca-oss')):
+            with self.subTest(implementation=root.name):
+                source = (root / 'mca_common/mca_adsp_glink.c').read_text()
+                functions = '\n'.join(function(source, name) for name in
+                                      ['mca_state_work', 'mca_queue_state', 'mca_state'])
+                run(PRELUDE + fixture.replace('/* PRODUCTION */', functions))
 
     def test_dt_parsing_boundaries(self):
         source = (MCA / 'mca_common/mca_parse_dts.c').read_text()

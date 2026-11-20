@@ -34,6 +34,9 @@ enum panel_event_notification_type {
 	DRM_PANEL_EVENT_UNBLANK,
 	DRM_PANEL_EVENT_BLANK_LP,
 	DRM_PANEL_EVENT_FPS_CHANGE,
+	/* MiCode annibale-w-oss panel/charging event contract. */
+	DRM_PANEL_EVENT_HBM_ON,
+	DRM_PANEL_EVENT_HBM_OFF,
 	DRM_PANEL_EVENT_MAX
 };
 

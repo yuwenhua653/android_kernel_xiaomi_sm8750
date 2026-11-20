@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: GPL-2.0-only
+
+config MI_TRACE
+	tristate "mi_trace support"
+	depends on PROC_FS && TRACEPOINTS && QCOM_MINIDUMP
+	default n
+	help
+		mi trace will record irq and schedule trace log.

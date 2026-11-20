@@ -63,28 +63,32 @@ static const struct fsa4480_reg_val fsa_reg_i2c_defaults[] = {
 	{FSA4480_SWITCH_SETTINGS, 0x98},
 };
 
-static void fsa4480_usbc_update_settings(struct fsa4480_priv *fsa_priv,
+static int fsa4480_usbc_update_settings(struct fsa4480_priv *fsa_priv,
 		u32 switch_control, u32 switch_enable)
 {
 	u32 prev_control, prev_enable;
+	int ret;
 
-	if (!fsa_priv->regmap) {
-		dev_err(fsa_priv->dev, "%s: regmap invalid\n", __func__);
-		return;
-	}
+	if (!fsa_priv->regmap)
+		return -EINVAL;
+	ret = regmap_read(fsa_priv->regmap, FSA4480_SWITCH_CONTROL, &prev_control);
+	if (ret)
+		return ret;
+	ret = regmap_read(fsa_priv->regmap, FSA4480_SWITCH_SETTINGS, &prev_enable);
+	if (ret)
+		return ret;
+	if (prev_control == switch_control && prev_enable == switch_enable)
+		return 0;
 
-	regmap_read(fsa_priv->regmap, FSA4480_SWITCH_CONTROL, &prev_control);
-	regmap_read(fsa_priv->regmap, FSA4480_SWITCH_SETTINGS, &prev_enable);
-	if (prev_control == switch_control && prev_enable == switch_enable) {
-		dev_dbg(fsa_priv->dev, "%s: settings unchanged\n", __func__);
-		return;
-	}
-
-	regmap_write(fsa_priv->regmap, FSA4480_SWITCH_SETTINGS, 0x80);
-	regmap_write(fsa_priv->regmap, FSA4480_SWITCH_CONTROL, switch_control);
+	ret = regmap_write(fsa_priv->regmap, FSA4480_SWITCH_SETTINGS, 0x80);
+	if (ret)
+		return ret;
+	ret = regmap_write(fsa_priv->regmap, FSA4480_SWITCH_CONTROL, switch_control);
+	if (ret)
+		return ret;
 	/* FSA4480 chip hardware requirement */
 	usleep_range(50, 55);
-	regmap_write(fsa_priv->regmap, FSA4480_SWITCH_SETTINGS, switch_enable);
+	return regmap_write(fsa_priv->regmap, FSA4480_SWITCH_SETTINGS, switch_enable);
 }
 
 static int fsa4480_usbc_event_changed(struct notifier_block *nb,
@@ -267,7 +271,8 @@ static int fsa4480_validate_display_port_settings(struct fsa4480_priv *fsa_priv)
 int fsa4480_switch_event(struct device_node *node,
 			 enum fsa_function event)
 {
-	int switch_control = 0;
+	u32 switch_control = 0;
+	int ret = -EINVAL;
 	struct i2c_client *client = of_find_i2c_device_by_node(node);
 	struct fsa4480_priv *fsa_priv;
 
@@ -275,35 +280,49 @@ int fsa4480_switch_event(struct device_node *node,
 		return -EINVAL;
 
 	fsa_priv = (struct fsa4480_priv *)i2c_get_clientdata(client);
-	if (!fsa_priv)
-		return -EINVAL;
-	if (!fsa_priv->regmap)
-		return -EINVAL;
+	if (!fsa_priv || !fsa_priv->regmap)
+		goto put_client;
 
 	switch (event) {
 	case FSA_MIC_GND_SWAP:
-		regmap_read(fsa_priv->regmap, FSA4480_SWITCH_CONTROL,
+		ret = regmap_read(fsa_priv->regmap, FSA4480_SWITCH_CONTROL,
 				&switch_control);
+		if (ret)
+			break;
 		if ((switch_control & 0x07) == 0x07)
 			switch_control = 0x0;
 		else
 			switch_control = 0x7;
-		fsa4480_usbc_update_settings(fsa_priv, switch_control, 0x9F);
+		ret = fsa4480_usbc_update_settings(fsa_priv, switch_control, 0x9F);
 		break;
 	case FSA_USBC_ORIENTATION_CC1:
-		fsa4480_usbc_update_settings(fsa_priv, 0x18, 0xF8);
-		return fsa4480_validate_display_port_settings(fsa_priv);
+		ret = fsa4480_usbc_update_settings(fsa_priv, 0x18, 0xF8);
+		if (!ret)
+			ret = fsa4480_validate_display_port_settings(fsa_priv);
+		break;
 	case FSA_USBC_ORIENTATION_CC2:
-		fsa4480_usbc_update_settings(fsa_priv, 0x78, 0xF8);
-		return fsa4480_validate_display_port_settings(fsa_priv);
+		ret = fsa4480_usbc_update_settings(fsa_priv, 0x78, 0xF8);
+		if (!ret)
+			ret = fsa4480_validate_display_port_settings(fsa_priv);
+		break;
 	case FSA_USBC_DISPLAYPORT_DISCONNECTED:
-		fsa4480_usbc_update_settings(fsa_priv, 0x18, 0x98);
+		ret = fsa4480_usbc_update_settings(fsa_priv, 0x18, 0x98);
+		break;
+	/* MiCode annibale-w-oss liquid-detection switch paths. */
+	case FSA_USBC_LPD_STATUS_CC1:
+		ret = fsa4480_usbc_update_settings(fsa_priv, 0x19, 0xD9);
+		break;
+	case FSA_USBC_LPD_STATUS_CC2:
+		ret = fsa4480_usbc_update_settings(fsa_priv, 0x78, 0xD9);
 		break;
 	default:
 		break;
 	}
 
-	return 0;
+	/* of_find_i2c_device_by_node() returns a referenced device. */
+put_client:
+	put_device(&client->dev);
+	return ret;
 }
 EXPORT_SYMBOL_GPL(fsa4480_switch_event);
 

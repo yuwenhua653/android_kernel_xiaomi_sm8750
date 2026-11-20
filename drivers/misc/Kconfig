@@ -607,4 +607,10 @@ source "drivers/misc/mchp_pci1xxxx/Kconfig"
 source "drivers/misc/hwid/Kconfig"
 source "drivers/misc/wifi_gpio/Kconfig"
 
+config NTSYNC
+	tristate "NT synchronization primitives"
+	depends on MMU
+	help
+	  Kernel synchronization primitives for NT userspace compatibility.
+
 endmenu

@@ -28,3 +28,6 @@ obj-$(CONFIG_PI433)		+= pi433/
 obj-$(CONFIG_XIL_AXIS_FIFO)	+= axis-fifo/
 obj-$(CONFIG_FIELDBUS_DEV)     += fieldbus/
 obj-$(CONFIG_QLGE)		+= qlge/
+
+obj-$(CONFIG_MIEV) += miev/
+obj-$(CONFIG_MI_RMAP_EFFICIENCY) += mi_rmap_efficiency/

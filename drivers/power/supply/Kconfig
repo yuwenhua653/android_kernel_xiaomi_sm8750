@@ -980,4 +980,6 @@ source "drivers/power/supply/qcom/Kconfig"
 
 source "drivers/power/supply/mca/Kconfig"
 
+source "drivers/power/supply/mca-oss/Kconfig"
+
 endif # POWER_SUPPLY

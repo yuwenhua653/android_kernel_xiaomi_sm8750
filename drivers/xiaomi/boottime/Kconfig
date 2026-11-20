@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: GPL-2.0-only
+#
+# Mi boot time
+#
+
+config MI_BOOT_TIME
+	tristate "boot time record"
+	depends on PROC_FS && TRACEPOINTS
+	default n
+	help
+	This adds support for mi boot time.

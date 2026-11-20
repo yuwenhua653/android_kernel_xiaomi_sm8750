@@ -73,3 +73,4 @@ obj-$(CONFIG_PKVM_SMC_FILTER)  += pkvm-smc/
 
 obj-$(CONFIG_MI_HARDWARE_ID) += hwid/
 obj-$(CONFIG_MI_WIFI_GPIO) += wifi_gpio/
+obj-$(CONFIG_NTSYNC) += ntsync.o
